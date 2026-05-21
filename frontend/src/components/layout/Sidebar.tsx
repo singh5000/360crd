@@ -20,6 +20,7 @@ export function Sidebar() {
   const permissions = user?.permissions ?? [];
   const canSee = (permission?: string) =>
     !permission || permissions.includes(permission) || permissions.includes("*");
+  const canSeeRole = (role?: string) => !role || user?.role === role;
 
   const panel = pathname.startsWith("/admin")
     ? "admin"
@@ -78,7 +79,7 @@ export function Sidebar() {
       {/* Nav groups */}
       <nav className="flex-1 space-y-4 px-3 py-2">
         {navGroups.map((group) => {
-          const visible = group.items.filter((item) => canSee(item.permission));
+          const visible = group.items.filter((item) => canSee(item.permission) && canSeeRole(item.role));
           if (visible.length === 0) return null;
           return (
             <div key={group.label}>

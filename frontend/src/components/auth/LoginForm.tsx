@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Loader2, Lock, Mail } from "lucide-react";
 import { z } from "zod";
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch, Link } from "@tanstack/react-router";
 import { InputField } from "@/components/shared/InputField";
 import { Button } from "@/components/shared/Button";
 import { authStore } from "@/lib/auth-store";
@@ -154,9 +154,9 @@ export function LoginForm() {
         />
 
         <div className="flex items-center justify-end pt-1">
-          <a href="#" className="text-xs font-medium text-primary hover:underline">
+          <Link to="/forgot-password" className="text-xs font-medium text-primary hover:underline">
             Forgot password?
-          </a>
+          </Link>
         </div>
 
         {errors.form && (

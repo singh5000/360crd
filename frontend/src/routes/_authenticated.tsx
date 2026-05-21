@@ -6,6 +6,9 @@ const CUSTOMER_ROLES = ["customer"];
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: ({ location }) => {
+    // Skip auth check on server — localStorage is unavailable there
+    if (typeof window === "undefined") return;
+
     if (!authStore.getState().isAuthenticated) {
       throw redirect({ to: "/login", search: { redirect: location.href } });
     }

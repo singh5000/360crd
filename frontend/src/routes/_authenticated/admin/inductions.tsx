@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { usePermissions } from "@/lib/auth-store";
 
 export const Route = createFileRoute("/_authenticated/admin/inductions")({
-  head: () => ({ meta: [{ title: "Inductions Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Inductions · 360CRD" }] }),
   component: InductionsPage,
 });
 
@@ -190,9 +190,9 @@ function InductionsPage() {
                         {item.status}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{item.site?.name ?? "â€”"}</TableCell>
+                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{item.site?.name ?? "—"}</TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                      {item.passingScore != null ? `${item.passingScore}%` : "â€”"}
+                      {item.passingScore != null ? `${item.passingScore}%` : "—"}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
@@ -236,7 +236,7 @@ function InductionsPage() {
             <Label htmlFor="induction-title">Title <span className="text-red-500">*</span></Label>
             <Input
               id="induction-title"
-              placeholder="e.g. Site Safety Induction â€” Warehouse"
+              placeholder="e.g. Site Safety Induction — Warehouse"
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
               required

@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { usePermissions } from "@/lib/auth-store";
 
 export const Route = createFileRoute("/_authenticated/app/waste")({
-  head: () => ({ meta: [{ title: "Waste Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Waste · 360CRD" }] }),
   component: WastePage,
 });
 
@@ -96,8 +96,8 @@ function WastePage() {
 
   const pills = [
     { label: "Total Records", value: stats?.total ?? items.length, icon: Recycle, color: "text-foreground" },
-    { label: "Quantity (kg)", value: stats?.totalQuantity ? stats.totalQuantity.toFixed(1) : "â€”", icon: Scale, color: "text-blue-500" },
-    { label: "Est. Cost", value: stats?.totalCost ? `$${stats.totalCost.toFixed(0)}` : "â€”", icon: DollarSign, color: "text-green-500" },
+    { label: "Quantity (kg)", value: stats?.totalQuantity ? stats.totalQuantity.toFixed(1) : "—", icon: Scale, color: "text-blue-500" },
+    { label: "Est. Cost", value: stats?.totalCost ? `$${stats.totalCost.toFixed(0)}` : "—", icon: DollarSign, color: "text-green-500" },
   ];
 
   async function handleSubmit(e: React.FormEvent) {
@@ -205,13 +205,13 @@ function WastePage() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <span className="rounded-md border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                        {item.category?.replace(/_/g, " ") ?? "â€”"}
+                        {item.category?.replace(/_/g, " ") ?? "—"}
                       </span>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                       {item.quantity} {item.unit}
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{item.site?.name ?? "â€”"}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{item.site?.name ?? "—"}</TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                       {new Date(item.disposedAt ?? item.createdAt).toLocaleDateString()}
                     </TableCell>

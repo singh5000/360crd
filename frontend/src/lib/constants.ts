@@ -27,6 +27,8 @@ export type NavItem = {
   to: string;
   icon: LucideIcon;
   permission?: string;
+  /** If set, item only renders for users with this exact role */
+  role?: string;
 };
 
 export type NavGroup = {
@@ -101,12 +103,17 @@ export const adminNavGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Super Admin",
+    items: [
+      { label: "Companies", to: "/admin/tenants", icon: Building2, role: "super_admin" },
+    ],
+  },
+  {
     label: "Platform",
     items: [
       { label: "Users", to: "/admin/users", icon: Users, permission: "user:read" },
       { label: "Sites", to: "/admin/sites", icon: Warehouse, permission: "site:read" },
-      { label: "Customers", to: "/admin/companies", icon: Building2, permission: "customer:read" },
-      { label: "Roles", to: "/admin/roles", icon: ShieldCheck, permission: "role:read" },
+      { label: "Roles", to: "/admin/roles", icon: ShieldCheck, permission: "role:read", role: "super_admin" },
     ],
   },
   {

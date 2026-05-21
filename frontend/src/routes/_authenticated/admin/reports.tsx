@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/reports")({
-  head: () => ({ meta: [{ title: "Reports Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Reports · 360CRD" }] }),
   component: ReportsPage,
 });
 
@@ -59,7 +59,7 @@ function ReportsPage() {
         parameters: {},
         filters: {},
       });
-      toast.success(`${label} report requested â€” it will be ready shortly`);
+      toast.success(`${label} report requested — it will be ready shortly`);
       setTimeout(load, 2000);
     } catch {
       toast.error("Failed to generate report");
@@ -124,7 +124,7 @@ function ReportsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground">{r.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {r.type?.replace(/_/g, " ")} Â· {new Date(r.createdAt).toLocaleDateString()}
+                      {r.type?.replace(/_/g, " ")} · {new Date(r.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">

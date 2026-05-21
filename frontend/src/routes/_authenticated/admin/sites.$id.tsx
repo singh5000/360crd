@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/admin/sites/$id")({
   head: () => ({
     meta: [
-      { title: "Site Detail Â· 360CRD" },
+      { title: "Site Detail · 360CRD" },
       { name: "description", content: "Site details, contacts and statistics." },
     ],
   }),
@@ -178,7 +178,7 @@ function FacilityDetailPage() {
                 )}
               </div>
               <div className="mt-4 border-t border-border/60 pt-4 text-xs text-muted-foreground">
-                Created {new Date(site.createdAt).toLocaleDateString()} Â· Updated {new Date(site.updatedAt).toLocaleDateString()}
+                Created {new Date(site.createdAt).toLocaleDateString()} · Updated {new Date(site.updatedAt).toLocaleDateString()}
               </div>
             </SurfaceCard>
           </div>

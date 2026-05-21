@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/admin/audits")({
   head: () => ({
     meta: [
-      { title: "Audits Â· 360CRD" },
+      { title: "Audits · 360CRD" },
       { name: "description", content: "Plan, execute and review compliance audits." },
     ],
   }),
@@ -43,8 +43,7 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 const AUDIT_TYPES = [
-  "INTERNAL", "EXTERNAL", "SUPPLIER", "REGULATORY",
-  "ISO9001", "ISO14001", "ISO45001", "CUSTOM",
+  "SCHEDULED", "UNANNOUNCED", "FOLLOW_UP", "COMPLIANCE", "INTERNAL", "EXTERNAL",
 ];
 
 const FILTER_CONFIGS = [
@@ -106,7 +105,7 @@ function AuditsPage() {
     { label: "Completed", value: stats?.completed ?? audits.filter((a) => a.status === "COMPLETED").length, icon: CheckCircle2, color: "text-green-500" },
     { label: "In Progress", value: audits.filter((a) => a.status === "IN_PROGRESS").length, icon: Clock, color: "text-yellow-500" },
     { label: "Overdue", value: stats?.overdue ?? 0, icon: AlertTriangle, color: "text-red-500" },
-    { label: "Avg Score", value: stats?.avgScore ? `${stats.avgScore.toFixed(0)}%` : "â€”", icon: BarChart3, color: "text-primary" },
+    { label: "Avg Score", value: stats?.avgScore ? `${stats.avgScore.toFixed(0)}%` : "—", icon: BarChart3, color: "text-primary" },
   ];
 
   async function handleSubmit(e: React.FormEvent) {
@@ -115,8 +114,8 @@ function AuditsPage() {
     try {
       await createAudit({
         ...form,
-        scheduledAt: form.scheduledAt || undefined,
-        dueDate: form.dueDate || undefined,
+        scheduledAt: form.scheduledAt ? `${form.scheduledAt}T00:00:00.000Z` : undefined,
+        dueDate: form.dueDate ? `${form.dueDate}T00:00:00.000Z` : undefined,
       });
       setDrawerOpen(false);
       setForm(EMPTY_FORM);
@@ -223,19 +222,19 @@ function AuditsPage() {
                         {audit.type}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{audit.site?.name ?? "â€”"}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{audit.site?.name ?? "—"}</TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                      {audit.assignedTo ? `${audit.assignedTo.firstName} ${audit.assignedTo.lastName}` : "â€”"}
+                      {audit.assignedTo ? `${audit.assignedTo.firstName} ${audit.assignedTo.lastName}` : "—"}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                      {audit.scheduledAt ? new Date(audit.scheduledAt).toLocaleDateString() : "â€”"}
+                      {audit.scheduledAt ? new Date(audit.scheduledAt).toLocaleDateString() : "—"}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm font-semibold">
                       {audit.percentage != null ? (
                         <span className={audit.passed ? "text-green-500" : "text-red-500"}>
                           {audit.percentage.toFixed(0)}%
                         </span>
-                      ) : "â€”"}
+                      ) : "—"}
                     </TableCell>
                     <TableCell className="text-right pr-3">
                       <ChevronRight className="h-4 w-4 text-muted-foreground/50" />

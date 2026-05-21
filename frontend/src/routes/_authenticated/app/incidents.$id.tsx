@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/app/incidents/$id")({
   head: () => ({
     meta: [
-      { title: "Incident Detail Â· 360CRD" },
+      { title: "Incident Detail · 360CRD" },
       { name: "description", content: "Incident details, timeline and actions." },
     ],
   }),

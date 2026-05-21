@@ -1,4 +1,6 @@
-import { Building2, Check, ChevronDown } from "lucide-react";
+import { useEffect } from "react";
+import { Building2, ChevronDown, Globe } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,18 +9,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  companyStore,
-  useActiveCompanyId,
-  useCompanies,
-} from "@/lib/company-store";
+import { useAuth } from "@/lib/auth-store";
+import { useTenants, tenantStore, TENANT_STATUS_COLOR } from "@/lib/stores/tenant.store";
+import { cn } from "@/lib/utils";
 
 export function CompanySwitcher() {
-  const companies = useCompanies();
-  const activeId = useActiveCompanyId();
-  const active = companies.find((c) => c.id === activeId) ?? companies[0];
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === "super_admin";
 
-  if (!active) return null;
+  if (isSuperAdmin) return <SuperAdminSwitcher />;
+  return null;
+}
+
+function SuperAdminSwitcher() {
+  const tenants = useTenants();
+  const navigate = useNavigate();
+  const { loading, initialized } = tenantStore.getState();
+
+  useEffect(() => {
+    if (!initialized && !loading) {
+      tenantStore.fetch({ limit: 50 });
+    }
+  }, [initialized, loading]);
+
+  const activeCount = tenants.filter((t) => t.status === "ACTIVE").length;
+  const trialCount  = tenants.filter((t) => t.status === "TRIAL").length;
 
   return (
     <DropdownMenu>
@@ -28,31 +43,66 @@ export function CompanySwitcher() {
           className="flex h-10 items-center gap-2 rounded-lg border border-border/60 bg-card/60 px-2.5 text-sm transition-colors hover:bg-accent"
         >
           <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/15 text-primary">
-            <Building2 className="h-3.5 w-3.5" />
+            <Globe className="h-3.5 w-3.5" />
           </span>
           <div className="hidden min-w-0 text-left sm:block">
-            <p className="truncate text-xs font-medium leading-tight text-foreground">{active.name}</p>
-            <p className="text-[10px] leading-tight text-muted-foreground">{active.plan}</p>
+            <p className="truncate text-xs font-medium leading-tight text-foreground">All Companies</p>
+            <p className="text-[10px] leading-tight text-muted-foreground">
+              {tenants.length} total · {activeCount} active
+            </p>
           </div>
           <ChevronDown className="h-4 w-4 text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-64">
-        <DropdownMenuLabel>Active company</DropdownMenuLabel>
+
+      <DropdownMenuContent align="start" className="w-72 max-h-[420px] overflow-y-auto">
+        <DropdownMenuLabel className="flex items-center justify-between">
+          <span>Companies</span>
+          <span className="text-[10px] font-normal text-muted-foreground">
+            {activeCount} active · {trialCount} trial
+          </span>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {companies.map((c) => (
-          <DropdownMenuItem
-            key={c.id}
-            onClick={() => companyStore.setActive(c.id)}
-            className="flex items-center justify-between gap-2"
-          >
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{c.name}</p>
-              <p className="text-[11px] text-muted-foreground">{c.industry} · {c.plan}</p>
-            </div>
-            {c.id === active.id && <Check className="h-4 w-4 text-primary" />}
-          </DropdownMenuItem>
-        ))}
+
+        {loading && !tenants.length ? (
+          <div className="px-3 py-4 text-center text-xs text-muted-foreground">Loading…</div>
+        ) : tenants.length === 0 ? (
+          <div className="px-3 py-4 text-center text-xs text-muted-foreground">No companies yet</div>
+        ) : (
+          tenants.map((t) => (
+            <DropdownMenuItem
+              key={t.id}
+              onClick={() => navigate({ to: "/admin/tenants" })}
+              className="flex items-center gap-2.5 py-2"
+            >
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                {t.branding?.logoUrl ? (
+                  <img src={t.branding.logoUrl} alt={t.name} className="h-full w-full rounded-md object-cover" />
+                ) : (
+                  <Building2 className="h-3.5 w-3.5 text-primary/70" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{t.name}</p>
+                <p className="text-[10px] text-muted-foreground font-mono">{t.slug}</p>
+              </div>
+              <span className={cn(
+                "shrink-0 rounded-full border px-1.5 py-0.5 text-[9px] font-medium",
+                TENANT_STATUS_COLOR[t.status],
+              )}>
+                {t.status}
+              </span>
+            </DropdownMenuItem>
+          ))
+        )}
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => navigate({ to: "/admin/tenants" })}
+          className="text-xs text-primary font-medium"
+        >
+          <Globe className="mr-2 h-3.5 w-3.5" /> Manage all companies
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

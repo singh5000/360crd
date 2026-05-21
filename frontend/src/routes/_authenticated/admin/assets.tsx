@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { usePermissions } from "@/lib/auth-store";
 
 export const Route = createFileRoute("/_authenticated/admin/assets")({
-  head: () => ({ meta: [{ title: "Assets Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Assets · 360CRD" }] }),
   component: AssetsPage,
 });
 
@@ -213,10 +213,10 @@ function AssetsPage() {
                       </span>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                      {[item.brand, item.model].filter(Boolean).join(" ") || "â€”"}
+                      {[item.brand, item.model].filter(Boolean).join(" ") || "—"}
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell font-mono text-xs text-muted-foreground">{item.assetTag ?? "â€”"}</TableCell>
-                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">{item.site?.name ?? "â€”"}</TableCell>
+                    <TableCell className="hidden lg:table-cell font-mono text-xs text-muted-foreground">{item.assetTag ?? "—"}</TableCell>
+                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">{item.site?.name ?? "—"}</TableCell>
                     <TableCell className="text-right pr-3">
                       <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
                     </TableCell>
@@ -253,7 +253,7 @@ function AssetsPage() {
             <Label htmlFor="asset-name">Asset Name <span className="text-red-500">*</span></Label>
             <Input
               id="asset-name"
-              placeholder="e.g. Forklift â€” Warehouse A"
+              placeholder="e.g. Forklift — Warehouse A"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               required

@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export const Route = createFileRoute("/_authenticated/app/audits/create")({
   head: () => ({
     meta: [
-      { title: "Create Audit Â· 360CRD" },
+      { title: "Create Audit · 360CRD" },
       { name: "description", content: "Create a new compliance audit." },
     ],
   }),

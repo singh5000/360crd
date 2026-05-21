@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/admin/companies")({
   head: () => ({
     meta: [
-      { title: "Customers Â· 360CRD" },
+      { title: "Customers · 360CRD" },
       { name: "description", content: "Manage customers and contracted sites." },
     ],
   }),
@@ -168,12 +168,12 @@ function CompaniesPage() {
                         {company.status}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{company.industry ?? "â€”"}</TableCell>
+                    <TableCell className="hidden md:table-cell text-sm text-muted-foreground">{company.industry ?? "—"}</TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                      {[company.city, company.country].filter(Boolean).join(", ") || "â€”"}
+                      {[company.city, company.country].filter(Boolean).join(", ") || "—"}
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{company.email ?? "â€”"}</TableCell>
-                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">{company._count?.sites ?? "â€”"}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">{company.email ?? "—"}</TableCell>
+                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">{company._count?.sites ?? "—"}</TableCell>
                     <TableCell className="text-right pr-3">
                       <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
                     </TableCell>

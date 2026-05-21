@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { usePermissions } from "@/lib/auth-store";
 
 export const Route = createFileRoute("/_authenticated/admin/training")({
-  head: () => ({ meta: [{ title: "Training Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Training · 360CRD" }] }),
   component: TrainingPage,
 });
 
@@ -96,7 +96,7 @@ function TrainingPage() {
     { label: "Total", value: stats?.total ?? items.length, icon: BookOpen, color: "text-foreground" },
     { label: "Published", value: stats?.published ?? items.filter((t) => t.status === "PUBLISHED").length, icon: Award, color: "text-green-500" },
     { label: "Enrollments", value: stats?.totalEnrollments ?? 0, icon: Users, color: "text-blue-500" },
-    { label: "Completion", value: stats?.completionRate ? `${stats.completionRate}%` : "â€”", icon: Clock, color: "text-primary" },
+    { label: "Completion", value: stats?.completionRate ? `${stats.completionRate}%` : "—", icon: Clock, color: "text-primary" },
   ];
 
   async function handleSubmit(e: React.FormEvent) {
@@ -207,11 +207,11 @@ function TrainingPage() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <span className="rounded-md border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                        {t.category ?? "â€”"}
+                        {t.category ?? "—"}
                       </span>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                      {t.durationMinutes ? `${t.durationMinutes} min` : "â€”"}
+                      {t.durationMinutes ? `${t.durationMinutes} min` : "—"}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">

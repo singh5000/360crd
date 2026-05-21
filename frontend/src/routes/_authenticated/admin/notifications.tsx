@@ -9,7 +9,7 @@ import { SurfaceCard } from "@/components/shared/Card";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/notifications")({
-  head: () => ({ meta: [{ title: "Notifications Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Notifications · 360CRD" }] }),
   component: NotificationsPage,
 });
 

@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/app/sites")({
   head: () => ({
     meta: [
-      { title: "Sites Â· 360CRD" },
+      { title: "Sites · 360CRD" },
       { name: "description", content: "Manage operational sites and locations." },
     ],
   }),
@@ -160,17 +160,17 @@ function FacilitiesPage() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <span className="rounded-md border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                        {site.type ?? "â€”"}
+                        {site.type ?? "—"}
                       </span>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                      {[site.city, site.country].filter(Boolean).join(", ") || "â€”"}
+                      {[site.city, site.country].filter(Boolean).join(", ") || "—"}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                      {(site as any).customer?.name ?? "â€”"}
+                      {(site as any).customer?.name ?? "—"}
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                      {site._count?.incidents ?? "â€”"}
+                      {site._count?.incidents ?? "—"}
                     </TableCell>
                     <TableCell className="text-right pr-3">
                       <ChevronRight className="h-4 w-4 text-muted-foreground/50" />

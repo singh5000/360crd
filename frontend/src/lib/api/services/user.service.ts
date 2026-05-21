@@ -73,7 +73,7 @@ export const userService = {
     apiClient.delete<void>(ENDPOINTS.users.remove(id)),
 
   updateStatus: (id: string, status: string) =>
-    apiClient.patch<{ success: true; data: User }>(ENDPOINTS.users.status(id), { status }).then(wrap),
+    apiClient.put<{ success: true; data: User }>(ENDPOINTS.users.status(id), { status }).then(wrap),
 
   assignRole: (id: string, roleId: string) =>
     apiClient.post<{ success: true }>(ENDPOINTS.users.roles(id), { roleId }),

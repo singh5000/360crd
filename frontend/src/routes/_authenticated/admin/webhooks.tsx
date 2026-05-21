@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/webhooks")({
-  head: () => ({ meta: [{ title: "Webhooks Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Webhooks · 360CRD" }] }),
   component: WebhooksPage,
 });
 

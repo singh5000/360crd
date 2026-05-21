@@ -24,14 +24,14 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/portal/incidents")({
   head: () => ({
     meta: [
-      { title: "Incidents Â· 360CRD" },
+      { title: "Incidents · 360CRD" },
       { name: "description", content: "Track, triage and resolve incidents." },
     ],
   }),
   component: IncidentsPage,
 });
 
-// â”€â”€ Colour maps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Colour maps â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 const STATUS_COLOR: Record<string, string> = {
   OPEN:          "bg-red-500/10 text-red-600 border-red-500/20",
   REPORTED:      "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
@@ -56,7 +56,7 @@ const PRIORITY_COLOR: Record<string, string> = {
   CRITICAL: "text-red-600",
 };
 
-// â”€â”€ Filter config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Filter config â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 const FILTER_CONFIGS: FilterConfig[] = [
   {
     key: "status",
@@ -100,7 +100,7 @@ const INCIDENT_TYPES = ["SAFETY", "ENVIRONMENTAL", "QUALITY", "SECURITY", "NEAR_
 const SEVERITIES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 
-// â”€â”€ Create Drawer Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Create Drawer Form â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 function CreateIncidentForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
   const { createIncident } = useIncidentStore();
   const [submitting, setSubmitting] = useState(false);
@@ -250,7 +250,7 @@ function CreateIncidentForm({ onSuccess, onCancel }: { onSuccess: () => void; on
   );
 }
 
-// â”€â”€ Stats bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Stats bar â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 function StatPill({
   label, value, icon: Icon, color,
 }: {
@@ -271,7 +271,7 @@ function StatPill({
   );
 }
 
-// â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Main page â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 function IncidentsPage() {
   const { incidents, loading, initialized, fetchIncidents } = useIncidentStore();
   const can = usePermissions();
@@ -466,14 +466,14 @@ function IncidentsPage() {
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <span className="text-xs text-foreground/80">
-                        {inc.site?.name ?? <span className="text-muted-foreground/50">â€”</span>}
+                        {inc.site?.name ?? <span className="text-muted-foreground/50">—</span>}
                       </span>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <span className="text-xs text-foreground/80">
                         {inc.reportedBy
                           ? `${inc.reportedBy.firstName} ${inc.reportedBy.lastName}`
-                          : <span className="text-muted-foreground/50">â€”</span>}
+                          : <span className="text-muted-foreground/50">—</span>}
                       </span>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">

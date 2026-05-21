@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/admin/activity")({
   head: () => ({
     meta: [
-      { title: "Activity Logs Â· 360CRD" },
+      { title: "Activity Logs · 360CRD" },
       { name: "description", content: "Compliance-grade audit trail across the platform." },
     ],
   }),
@@ -51,7 +51,7 @@ function ActivityPage() {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Activity Logs</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Centralized audit trail across every module Â· {filtered.length} of {logs.length} events
+              Centralized audit trail across every module · {filtered.length} of {logs.length} events
             </p>
           </div>
           <div className="flex items-center gap-2">

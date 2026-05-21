@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedWebhooksRouteImport } from './routes/_authenticated.webhooks'
@@ -18,9 +20,9 @@ import { Route as AuthenticatedUsersRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated.training'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings'
 import { Route as AuthenticatedRolesRouteImport } from './routes/_authenticated.roles'
-import { Route as AuthenticatedRolesIdRouteImport } from './routes/_authenticated.roles.$id'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated.reports'
 import { Route as AuthenticatedPpeRouteImport } from './routes/_authenticated.ppe'
+import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated.notifications'
 import { Route as AuthenticatedInductionsRouteImport } from './routes/_authenticated.inductions'
 import { Route as AuthenticatedIncidentsRouteImport } from './routes/_authenticated.incidents'
@@ -30,7 +32,18 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCompaniesRouteImport } from './routes/_authenticated.companies'
 import { Route as AuthenticatedAuditsRouteImport } from './routes/_authenticated.audits'
 import { Route as AuthenticatedAssetsRouteImport } from './routes/_authenticated.assets'
+import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated/app'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedActivityRouteImport } from './routes/_authenticated.activity'
+import { Route as AuthenticatedRolesIdRouteImport } from './routes/_authenticated.roles.$id'
+import { Route as AuthenticatedPortalSitesRouteImport } from './routes/_authenticated/portal/sites'
+import { Route as AuthenticatedPortalReportsRouteImport } from './routes/_authenticated/portal/reports'
+import { Route as AuthenticatedPortalNotificationsRouteImport } from './routes/_authenticated/portal/notifications'
+import { Route as AuthenticatedPortalIncidentsRouteImport } from './routes/_authenticated/portal/incidents'
+import { Route as AuthenticatedPortalFeedbackRouteImport } from './routes/_authenticated/portal/feedback'
+import { Route as AuthenticatedPortalDocumentsRouteImport } from './routes/_authenticated/portal/documents'
+import { Route as AuthenticatedPortalDashboardRouteImport } from './routes/_authenticated/portal/dashboard'
+import { Route as AuthenticatedPortalAuditsRouteImport } from './routes/_authenticated/portal/audits'
 import { Route as AuthenticatedIncidentsCreateRouteImport } from './routes/_authenticated.incidents.create'
 import { Route as AuthenticatedIncidentsIdRouteImport } from './routes/_authenticated.incidents.$id'
 import { Route as AuthenticatedFacilitiesCreateRouteImport } from './routes/_authenticated.facilities.create'
@@ -38,64 +51,58 @@ import { Route as AuthenticatedFacilitiesIdRouteImport } from './routes/_authent
 import { Route as AuthenticatedCompaniesCreateRouteImport } from './routes/_authenticated.companies.create'
 import { Route as AuthenticatedCompaniesIdRouteImport } from './routes/_authenticated.companies.$id'
 import { Route as AuthenticatedAuditsCreateRouteImport } from './routes/_authenticated.audits.create'
+import { Route as AuthenticatedAppWasteRouteImport } from './routes/_authenticated/app/waste'
+import { Route as AuthenticatedAppTrainingRouteImport } from './routes/_authenticated/app/training'
+import { Route as AuthenticatedAppSitesRouteImport } from './routes/_authenticated/app/sites'
+import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app/reports'
+import { Route as AuthenticatedAppPpeRouteImport } from './routes/_authenticated/app/ppe'
+import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/app/notifications'
+import { Route as AuthenticatedAppInductionsRouteImport } from './routes/_authenticated/app/inductions'
+import { Route as AuthenticatedAppIncidentsRouteImport } from './routes/_authenticated/app/incidents'
+import { Route as AuthenticatedAppDocumentsRouteImport } from './routes/_authenticated/app/documents'
+import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authenticated/app/dashboard'
+import { Route as AuthenticatedAppAuditsRouteImport } from './routes/_authenticated/app/audits'
+import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app/assets'
+import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated/admin/webhooks'
+import { Route as AuthenticatedAdminWasteRouteImport } from './routes/_authenticated/admin/waste'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as AuthenticatedAdminTrainingRouteImport } from './routes/_authenticated/admin/training'
+import { Route as AuthenticatedAdminTenantsRouteImport } from './routes/_authenticated/admin/tenants'
+import { Route as AuthenticatedAdminSitesRouteImport } from './routes/_authenticated/admin/sites'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
+import { Route as AuthenticatedAdminRolesRouteImport } from './routes/_authenticated/admin/roles'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
+import { Route as AuthenticatedAdminPpeRouteImport } from './routes/_authenticated/admin/ppe'
+import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated/admin/notifications'
+import { Route as AuthenticatedAdminInductionsRouteImport } from './routes/_authenticated/admin/inductions'
+import { Route as AuthenticatedAdminIncidentsRouteImport } from './routes/_authenticated/admin/incidents'
+import { Route as AuthenticatedAdminFeedbackRouteImport } from './routes/_authenticated/admin/feedback'
+import { Route as AuthenticatedAdminDocumentsRouteImport } from './routes/_authenticated/admin/documents'
+import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated/admin/dashboard'
+import { Route as AuthenticatedAdminCompaniesRouteImport } from './routes/_authenticated/admin/companies'
+import { Route as AuthenticatedAdminAuditsRouteImport } from './routes/_authenticated/admin/audits'
+import { Route as AuthenticatedAdminAssetsRouteImport } from './routes/_authenticated/admin/assets'
+import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated/admin/activity'
+import { Route as AuthenticatedAppIncidentsCreateRouteImport } from './routes/_authenticated/app/incidents.create'
+import { Route as AuthenticatedAppIncidentsIdRouteImport } from './routes/_authenticated/app/incidents.$id'
+import { Route as AuthenticatedAppAuditsCreateRouteImport } from './routes/_authenticated/app/audits.create'
+import { Route as AuthenticatedAdminSitesIdRouteImport } from './routes/_authenticated/admin/sites.$id'
+import { Route as AuthenticatedAdminRolesIdRouteImport } from './routes/_authenticated/admin/roles.$id'
+import { Route as AuthenticatedAdminCompaniesIdRouteImport } from './routes/_authenticated/admin/companies.$id'
 
-// ── Admin panel ───────────────────────────────────────────────────────────────
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
-import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
-import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated.admin.users'
-import { Route as AuthenticatedAdminRolesRouteImport } from './routes/_authenticated.admin.roles'
-import { Route as AuthenticatedAdminRolesIdRouteImport } from './routes/_authenticated.admin.roles.$id'
-import { Route as AuthenticatedAdminSitesRouteImport } from './routes/_authenticated.admin.sites'
-import { Route as AuthenticatedAdminSitesIdRouteImport } from './routes/_authenticated.admin.sites.$id'
-import { Route as AuthenticatedAdminCompaniesRouteImport } from './routes/_authenticated.admin.companies'
-import { Route as AuthenticatedAdminCompaniesIdRouteImport } from './routes/_authenticated.admin.companies.$id'
-import { Route as AuthenticatedAdminIncidentsRouteImport } from './routes/_authenticated.admin.incidents'
-import { Route as AuthenticatedAdminAuditsRouteImport } from './routes/_authenticated.admin.audits'
-import { Route as AuthenticatedAdminTrainingRouteImport } from './routes/_authenticated.admin.training'
-import { Route as AuthenticatedAdminInductionsRouteImport } from './routes/_authenticated.admin.inductions'
-import { Route as AuthenticatedAdminPpeRouteImport } from './routes/_authenticated.admin.ppe'
-import { Route as AuthenticatedAdminAssetsRouteImport } from './routes/_authenticated.admin.assets'
-import { Route as AuthenticatedAdminWasteRouteImport } from './routes/_authenticated.admin.waste'
-import { Route as AuthenticatedAdminDocumentsRouteImport } from './routes/_authenticated.admin.documents'
-import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated.admin.reports'
-import { Route as AuthenticatedAdminActivityRouteImport } from './routes/_authenticated.admin.activity'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated.admin.settings'
-import { Route as AuthenticatedAdminWebhooksRouteImport } from './routes/_authenticated.admin.webhooks'
-import { Route as AuthenticatedAdminNotificationsRouteImport } from './routes/_authenticated.admin.notifications'
-import { Route as AuthenticatedAdminFeedbackRouteImport } from './routes/_authenticated.admin.feedback'
-
-// ── App panel (Manager + Staff) ───────────────────────────────────────────────
-import { Route as AuthenticatedAppRouteImport } from './routes/_authenticated.app'
-import { Route as AuthenticatedAppDashboardRouteImport } from './routes/_authenticated.app.dashboard'
-import { Route as AuthenticatedAppIncidentsRouteImport } from './routes/_authenticated.app.incidents'
-import { Route as AuthenticatedAppIncidentsIdRouteImport } from './routes/_authenticated.app.incidents.$id'
-import { Route as AuthenticatedAppIncidentsCreateRouteImport } from './routes/_authenticated.app.incidents.create'
-import { Route as AuthenticatedAppAuditsRouteImport } from './routes/_authenticated.app.audits'
-import { Route as AuthenticatedAppAuditsCreateRouteImport } from './routes/_authenticated.app.audits.create'
-import { Route as AuthenticatedAppTrainingRouteImport } from './routes/_authenticated.app.training'
-import { Route as AuthenticatedAppInductionsRouteImport } from './routes/_authenticated.app.inductions'
-import { Route as AuthenticatedAppPpeRouteImport } from './routes/_authenticated.app.ppe'
-import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated.app.assets'
-import { Route as AuthenticatedAppWasteRouteImport } from './routes/_authenticated.app.waste'
-import { Route as AuthenticatedAppDocumentsRouteImport } from './routes/_authenticated.app.documents'
-import { Route as AuthenticatedAppSitesRouteImport } from './routes/_authenticated.app.sites'
-import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated.app.reports'
-import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated.app.notifications'
-
-// ── Portal (Customer) ─────────────────────────────────────────────────────────
-import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated.portal'
-import { Route as AuthenticatedPortalDashboardRouteImport } from './routes/_authenticated.portal.dashboard'
-import { Route as AuthenticatedPortalSitesRouteImport } from './routes/_authenticated.portal.sites'
-import { Route as AuthenticatedPortalIncidentsRouteImport } from './routes/_authenticated.portal.incidents'
-import { Route as AuthenticatedPortalAuditsRouteImport } from './routes/_authenticated.portal.audits'
-import { Route as AuthenticatedPortalDocumentsRouteImport } from './routes/_authenticated.portal.documents'
-import { Route as AuthenticatedPortalReportsRouteImport } from './routes/_authenticated.portal.reports'
-import { Route as AuthenticatedPortalFeedbackRouteImport } from './routes/_authenticated.portal.feedback'
-import { Route as AuthenticatedPortalNotificationsRouteImport } from './routes/_authenticated.portal.notifications'
-
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -137,11 +144,6 @@ const AuthenticatedRolesRoute = AuthenticatedRolesRouteImport.update({
   path: '/roles',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedRolesIdRoute = AuthenticatedRolesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AuthenticatedRolesRoute,
-} as any)
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -150,6 +152,11 @@ const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
 const AuthenticatedPpeRoute = AuthenticatedPpeRouteImport.update({
   id: '/ppe',
   path: '/ppe',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedNotificationsRoute =
@@ -198,11 +205,74 @@ const AuthenticatedAssetsRoute = AuthenticatedAssetsRouteImport.update({
   path: '/assets',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedActivityRoute = AuthenticatedActivityRouteImport.update({
   id: '/activity',
   path: '/activity',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedRolesIdRoute = AuthenticatedRolesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedRolesRoute,
+} as any)
+const AuthenticatedPortalSitesRoute =
+  AuthenticatedPortalSitesRouteImport.update({
+    id: '/sites',
+    path: '/sites',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalReportsRoute =
+  AuthenticatedPortalReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalNotificationsRoute =
+  AuthenticatedPortalNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalIncidentsRoute =
+  AuthenticatedPortalIncidentsRouteImport.update({
+    id: '/incidents',
+    path: '/incidents',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalFeedbackRoute =
+  AuthenticatedPortalFeedbackRouteImport.update({
+    id: '/feedback',
+    path: '/feedback',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalDocumentsRoute =
+  AuthenticatedPortalDocumentsRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalDashboardRoute =
+  AuthenticatedPortalDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalAuditsRoute =
+  AuthenticatedPortalAuditsRouteImport.update({
+    id: '/audits',
+    path: '/audits',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
 const AuthenticatedIncidentsCreateRoute =
   AuthenticatedIncidentsCreateRouteImport.update({
     id: '/create',
@@ -245,65 +315,232 @@ const AuthenticatedAuditsCreateRoute =
     path: '/create',
     getParentRoute: () => AuthenticatedAuditsRoute,
   } as any)
-
-// ── Admin panel routes ────────────────────────────────────────────────────────
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({ id: '/admin', path: '/admin', getParentRoute: () => AuthenticatedRoute } as any)
-const AuthenticatedAdminDashboardRoute = AuthenticatedAdminDashboardRouteImport.update({ id: '/dashboard', path: '/dashboard', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({ id: '/users', path: '/users', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminRolesRoute = AuthenticatedAdminRolesRouteImport.update({ id: '/roles', path: '/roles', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminRolesIdRoute = AuthenticatedAdminRolesIdRouteImport.update({ id: '/$id', path: '/$id', getParentRoute: () => AuthenticatedAdminRolesRoute } as any)
-const AuthenticatedAdminSitesRoute = AuthenticatedAdminSitesRouteImport.update({ id: '/sites', path: '/sites', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminSitesIdRoute = AuthenticatedAdminSitesIdRouteImport.update({ id: '/$id', path: '/$id', getParentRoute: () => AuthenticatedAdminSitesRoute } as any)
-const AuthenticatedAdminCompaniesRoute = AuthenticatedAdminCompaniesRouteImport.update({ id: '/companies', path: '/companies', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminCompaniesIdRoute = AuthenticatedAdminCompaniesIdRouteImport.update({ id: '/$id', path: '/$id', getParentRoute: () => AuthenticatedAdminCompaniesRoute } as any)
-const AuthenticatedAdminIncidentsRoute = AuthenticatedAdminIncidentsRouteImport.update({ id: '/incidents', path: '/incidents', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminAuditsRoute = AuthenticatedAdminAuditsRouteImport.update({ id: '/audits', path: '/audits', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminTrainingRoute = AuthenticatedAdminTrainingRouteImport.update({ id: '/training', path: '/training', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminInductionsRoute = AuthenticatedAdminInductionsRouteImport.update({ id: '/inductions', path: '/inductions', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminPpeRoute = AuthenticatedAdminPpeRouteImport.update({ id: '/ppe', path: '/ppe', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminAssetsRoute = AuthenticatedAdminAssetsRouteImport.update({ id: '/assets', path: '/assets', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminWasteRoute = AuthenticatedAdminWasteRouteImport.update({ id: '/waste', path: '/waste', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminDocumentsRoute = AuthenticatedAdminDocumentsRouteImport.update({ id: '/documents', path: '/documents', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminReportsRoute = AuthenticatedAdminReportsRouteImport.update({ id: '/reports', path: '/reports', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminActivityRoute = AuthenticatedAdminActivityRouteImport.update({ id: '/activity', path: '/activity', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminSettingsRoute = AuthenticatedAdminSettingsRouteImport.update({ id: '/settings', path: '/settings', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminWebhooksRoute = AuthenticatedAdminWebhooksRouteImport.update({ id: '/webhooks', path: '/webhooks', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminNotificationsRoute = AuthenticatedAdminNotificationsRouteImport.update({ id: '/notifications', path: '/notifications', getParentRoute: () => AuthenticatedAdminRoute } as any)
-const AuthenticatedAdminFeedbackRoute = AuthenticatedAdminFeedbackRouteImport.update({ id: '/feedback', path: '/feedback', getParentRoute: () => AuthenticatedAdminRoute } as any)
-
-// ── App panel routes ──────────────────────────────────────────────────────────
-const AuthenticatedAppRoute = AuthenticatedAppRouteImport.update({ id: '/app', path: '/app', getParentRoute: () => AuthenticatedRoute } as any)
-const AuthenticatedAppDashboardRoute = AuthenticatedAppDashboardRouteImport.update({ id: '/dashboard', path: '/dashboard', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppIncidentsRoute = AuthenticatedAppIncidentsRouteImport.update({ id: '/incidents', path: '/incidents', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppIncidentsIdRoute = AuthenticatedAppIncidentsIdRouteImport.update({ id: '/$id', path: '/$id', getParentRoute: () => AuthenticatedAppIncidentsRoute } as any)
-const AuthenticatedAppIncidentsCreateRoute = AuthenticatedAppIncidentsCreateRouteImport.update({ id: '/create', path: '/create', getParentRoute: () => AuthenticatedAppIncidentsRoute } as any)
-const AuthenticatedAppAuditsRoute = AuthenticatedAppAuditsRouteImport.update({ id: '/audits', path: '/audits', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppAuditsCreateRoute = AuthenticatedAppAuditsCreateRouteImport.update({ id: '/create', path: '/create', getParentRoute: () => AuthenticatedAppAuditsRoute } as any)
-const AuthenticatedAppTrainingRoute = AuthenticatedAppTrainingRouteImport.update({ id: '/training', path: '/training', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppInductionsRoute = AuthenticatedAppInductionsRouteImport.update({ id: '/inductions', path: '/inductions', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppPpeRoute = AuthenticatedAppPpeRouteImport.update({ id: '/ppe', path: '/ppe', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({ id: '/assets', path: '/assets', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppWasteRoute = AuthenticatedAppWasteRouteImport.update({ id: '/waste', path: '/waste', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppDocumentsRoute = AuthenticatedAppDocumentsRouteImport.update({ id: '/documents', path: '/documents', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppSitesRoute = AuthenticatedAppSitesRouteImport.update({ id: '/sites', path: '/sites', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppReportsRoute = AuthenticatedAppReportsRouteImport.update({ id: '/reports', path: '/reports', getParentRoute: () => AuthenticatedAppRoute } as any)
-const AuthenticatedAppNotificationsRoute = AuthenticatedAppNotificationsRouteImport.update({ id: '/notifications', path: '/notifications', getParentRoute: () => AuthenticatedAppRoute } as any)
-
-// ── Portal routes ─────────────────────────────────────────────────────────────
-const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({ id: '/portal', path: '/portal', getParentRoute: () => AuthenticatedRoute } as any)
-const AuthenticatedPortalDashboardRoute = AuthenticatedPortalDashboardRouteImport.update({ id: '/dashboard', path: '/dashboard', getParentRoute: () => AuthenticatedPortalRoute } as any)
-const AuthenticatedPortalSitesRoute = AuthenticatedPortalSitesRouteImport.update({ id: '/sites', path: '/sites', getParentRoute: () => AuthenticatedPortalRoute } as any)
-const AuthenticatedPortalIncidentsRoute = AuthenticatedPortalIncidentsRouteImport.update({ id: '/incidents', path: '/incidents', getParentRoute: () => AuthenticatedPortalRoute } as any)
-const AuthenticatedPortalAuditsRoute = AuthenticatedPortalAuditsRouteImport.update({ id: '/audits', path: '/audits', getParentRoute: () => AuthenticatedPortalRoute } as any)
-const AuthenticatedPortalDocumentsRoute = AuthenticatedPortalDocumentsRouteImport.update({ id: '/documents', path: '/documents', getParentRoute: () => AuthenticatedPortalRoute } as any)
-const AuthenticatedPortalReportsRoute = AuthenticatedPortalReportsRouteImport.update({ id: '/reports', path: '/reports', getParentRoute: () => AuthenticatedPortalRoute } as any)
-const AuthenticatedPortalFeedbackRoute = AuthenticatedPortalFeedbackRouteImport.update({ id: '/feedback', path: '/feedback', getParentRoute: () => AuthenticatedPortalRoute } as any)
-const AuthenticatedPortalNotificationsRoute = AuthenticatedPortalNotificationsRouteImport.update({ id: '/notifications', path: '/notifications', getParentRoute: () => AuthenticatedPortalRoute } as any)
+const AuthenticatedAppWasteRoute = AuthenticatedAppWasteRouteImport.update({
+  id: '/waste',
+  path: '/waste',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppTrainingRoute =
+  AuthenticatedAppTrainingRouteImport.update({
+    id: '/training',
+    path: '/training',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppSitesRoute = AuthenticatedAppSitesRouteImport.update({
+  id: '/sites',
+  path: '/sites',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppReportsRoute = AuthenticatedAppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppPpeRoute = AuthenticatedAppPpeRouteImport.update({
+  id: '/ppe',
+  path: '/ppe',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppNotificationsRoute =
+  AuthenticatedAppNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppInductionsRoute =
+  AuthenticatedAppInductionsRouteImport.update({
+    id: '/inductions',
+    path: '/inductions',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppIncidentsRoute =
+  AuthenticatedAppIncidentsRouteImport.update({
+    id: '/incidents',
+    path: '/incidents',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppDocumentsRoute =
+  AuthenticatedAppDocumentsRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppDashboardRoute =
+  AuthenticatedAppDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAppRoute,
+  } as any)
+const AuthenticatedAppAuditsRoute = AuthenticatedAppAuditsRouteImport.update({
+  id: '/audits',
+  path: '/audits',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({
+  id: '/assets',
+  path: '/assets',
+  getParentRoute: () => AuthenticatedAppRoute,
+} as any)
+const AuthenticatedAdminWebhooksRoute =
+  AuthenticatedAdminWebhooksRouteImport.update({
+    id: '/webhooks',
+    path: '/webhooks',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminWasteRoute = AuthenticatedAdminWasteRouteImport.update({
+  id: '/waste',
+  path: '/waste',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminTrainingRoute =
+  AuthenticatedAdminTrainingRouteImport.update({
+    id: '/training',
+    path: '/training',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminTenantsRoute =
+  AuthenticatedAdminTenantsRouteImport.update({
+    id: '/tenants',
+    path: '/tenants',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSitesRoute = AuthenticatedAdminSitesRouteImport.update({
+  id: '/sites',
+  path: '/sites',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRolesRoute = AuthenticatedAdminRolesRouteImport.update({
+  id: '/roles',
+  path: '/roles',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPpeRoute = AuthenticatedAdminPpeRouteImport.update({
+  id: '/ppe',
+  path: '/ppe',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminNotificationsRoute =
+  AuthenticatedAdminNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminInductionsRoute =
+  AuthenticatedAdminInductionsRouteImport.update({
+    id: '/inductions',
+    path: '/inductions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminIncidentsRoute =
+  AuthenticatedAdminIncidentsRouteImport.update({
+    id: '/incidents',
+    path: '/incidents',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminFeedbackRoute =
+  AuthenticatedAdminFeedbackRouteImport.update({
+    id: '/feedback',
+    path: '/feedback',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDocumentsRoute =
+  AuthenticatedAdminDocumentsRouteImport.update({
+    id: '/documents',
+    path: '/documents',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDashboardRoute =
+  AuthenticatedAdminDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCompaniesRoute =
+  AuthenticatedAdminCompaniesRouteImport.update({
+    id: '/companies',
+    path: '/companies',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAuditsRoute =
+  AuthenticatedAdminAuditsRouteImport.update({
+    id: '/audits',
+    path: '/audits',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAssetsRoute =
+  AuthenticatedAdminAssetsRouteImport.update({
+    id: '/assets',
+    path: '/assets',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminActivityRoute =
+  AuthenticatedAdminActivityRouteImport.update({
+    id: '/activity',
+    path: '/activity',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAppIncidentsCreateRoute =
+  AuthenticatedAppIncidentsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedAppIncidentsRoute,
+  } as any)
+const AuthenticatedAppIncidentsIdRoute =
+  AuthenticatedAppIncidentsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAppIncidentsRoute,
+  } as any)
+const AuthenticatedAppAuditsCreateRoute =
+  AuthenticatedAppAuditsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => AuthenticatedAppAuditsRoute,
+  } as any)
+const AuthenticatedAdminSitesIdRoute =
+  AuthenticatedAdminSitesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminSitesRoute,
+  } as any)
+const AuthenticatedAdminRolesIdRoute =
+  AuthenticatedAdminRolesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminRolesRoute,
+  } as any)
+const AuthenticatedAdminCompaniesIdRoute =
+  AuthenticatedAdminCompaniesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminCompaniesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/activity': typeof AuthenticatedActivityRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/app': typeof AuthenticatedAppRouteWithChildren
   '/assets': typeof AuthenticatedAssetsRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
@@ -313,6 +550,7 @@ export interface FileRoutesByFullPath {
   '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
   '/inductions': typeof AuthenticatedInductionsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/portal': typeof AuthenticatedPortalRouteWithChildren
   '/ppe': typeof AuthenticatedPpeRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/roles': typeof AuthenticatedRolesRouteWithChildren
@@ -321,6 +559,38 @@ export interface FileRoutesByFullPath {
   '/users': typeof AuthenticatedUsersRoute
   '/waste': typeof AuthenticatedWasteRoute
   '/webhooks': typeof AuthenticatedWebhooksRoute
+  '/admin/activity': typeof AuthenticatedAdminActivityRoute
+  '/admin/assets': typeof AuthenticatedAdminAssetsRoute
+  '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/admin/companies': typeof AuthenticatedAdminCompaniesRouteWithChildren
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
+  '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
+  '/admin/incidents': typeof AuthenticatedAdminIncidentsRoute
+  '/admin/inductions': typeof AuthenticatedAdminInductionsRoute
+  '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/admin/ppe': typeof AuthenticatedAdminPpeRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/roles': typeof AuthenticatedAdminRolesRouteWithChildren
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/sites': typeof AuthenticatedAdminSitesRouteWithChildren
+  '/admin/tenants': typeof AuthenticatedAdminTenantsRoute
+  '/admin/training': typeof AuthenticatedAdminTrainingRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/waste': typeof AuthenticatedAdminWasteRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
+  '/app/assets': typeof AuthenticatedAppAssetsRoute
+  '/app/audits': typeof AuthenticatedAppAuditsRouteWithChildren
+  '/app/dashboard': typeof AuthenticatedAppDashboardRoute
+  '/app/documents': typeof AuthenticatedAppDocumentsRoute
+  '/app/incidents': typeof AuthenticatedAppIncidentsRouteWithChildren
+  '/app/inductions': typeof AuthenticatedAppInductionsRoute
+  '/app/notifications': typeof AuthenticatedAppNotificationsRoute
+  '/app/ppe': typeof AuthenticatedAppPpeRoute
+  '/app/reports': typeof AuthenticatedAppReportsRoute
+  '/app/sites': typeof AuthenticatedAppSitesRoute
+  '/app/training': typeof AuthenticatedAppTrainingRoute
+  '/app/waste': typeof AuthenticatedAppWasteRoute
   '/audits/create': typeof AuthenticatedAuditsCreateRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/companies/create': typeof AuthenticatedCompaniesCreateRoute
@@ -328,63 +598,30 @@ export interface FileRoutesByFullPath {
   '/facilities/create': typeof AuthenticatedFacilitiesCreateRoute
   '/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/incidents/create': typeof AuthenticatedIncidentsCreateRoute
+  '/portal/audits': typeof AuthenticatedPortalAuditsRoute
+  '/portal/dashboard': typeof AuthenticatedPortalDashboardRoute
+  '/portal/documents': typeof AuthenticatedPortalDocumentsRoute
+  '/portal/feedback': typeof AuthenticatedPortalFeedbackRoute
+  '/portal/incidents': typeof AuthenticatedPortalIncidentsRoute
+  '/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
+  '/portal/reports': typeof AuthenticatedPortalReportsRoute
+  '/portal/sites': typeof AuthenticatedPortalSitesRoute
   '/roles/$id': typeof AuthenticatedRolesIdRoute
-  // Admin panel
-  '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/roles': typeof AuthenticatedAdminRolesRouteWithChildren
-  '/admin/roles/$id': typeof AuthenticatedAdminRolesIdRoute
-  '/admin/sites': typeof AuthenticatedAdminSitesRouteWithChildren
-  '/admin/sites/$id': typeof AuthenticatedAdminSitesIdRoute
-  '/admin/companies': typeof AuthenticatedAdminCompaniesRouteWithChildren
   '/admin/companies/$id': typeof AuthenticatedAdminCompaniesIdRoute
-  '/admin/incidents': typeof AuthenticatedAdminIncidentsRoute
-  '/admin/audits': typeof AuthenticatedAdminAuditsRoute
-  '/admin/training': typeof AuthenticatedAdminTrainingRoute
-  '/admin/inductions': typeof AuthenticatedAdminInductionsRoute
-  '/admin/ppe': typeof AuthenticatedAdminPpeRoute
-  '/admin/assets': typeof AuthenticatedAdminAssetsRoute
-  '/admin/waste': typeof AuthenticatedAdminWasteRoute
-  '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
-  '/admin/reports': typeof AuthenticatedAdminReportsRoute
-  '/admin/activity': typeof AuthenticatedAdminActivityRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
-  '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
-  // App panel
-  '/app': typeof AuthenticatedAppRouteWithChildren
-  '/app/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/app/incidents': typeof AuthenticatedAppIncidentsRouteWithChildren
+  '/admin/roles/$id': typeof AuthenticatedAdminRolesIdRoute
+  '/admin/sites/$id': typeof AuthenticatedAdminSitesIdRoute
+  '/app/audits/create': typeof AuthenticatedAppAuditsCreateRoute
   '/app/incidents/$id': typeof AuthenticatedAppIncidentsIdRoute
   '/app/incidents/create': typeof AuthenticatedAppIncidentsCreateRoute
-  '/app/audits': typeof AuthenticatedAppAuditsRouteWithChildren
-  '/app/audits/create': typeof AuthenticatedAppAuditsCreateRoute
-  '/app/training': typeof AuthenticatedAppTrainingRoute
-  '/app/inductions': typeof AuthenticatedAppInductionsRoute
-  '/app/ppe': typeof AuthenticatedAppPpeRoute
-  '/app/assets': typeof AuthenticatedAppAssetsRoute
-  '/app/waste': typeof AuthenticatedAppWasteRoute
-  '/app/documents': typeof AuthenticatedAppDocumentsRoute
-  '/app/sites': typeof AuthenticatedAppSitesRoute
-  '/app/reports': typeof AuthenticatedAppReportsRoute
-  '/app/notifications': typeof AuthenticatedAppNotificationsRoute
-  // Portal panel
-  '/portal': typeof AuthenticatedPortalRouteWithChildren
-  '/portal/dashboard': typeof AuthenticatedPortalDashboardRoute
-  '/portal/sites': typeof AuthenticatedPortalSitesRoute
-  '/portal/incidents': typeof AuthenticatedPortalIncidentsRoute
-  '/portal/audits': typeof AuthenticatedPortalAuditsRoute
-  '/portal/documents': typeof AuthenticatedPortalDocumentsRoute
-  '/portal/reports': typeof AuthenticatedPortalReportsRoute
-  '/portal/feedback': typeof AuthenticatedPortalFeedbackRoute
-  '/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/activity': typeof AuthenticatedActivityRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/app': typeof AuthenticatedAppRouteWithChildren
   '/assets': typeof AuthenticatedAssetsRoute
   '/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/companies': typeof AuthenticatedCompaniesRouteWithChildren
@@ -394,6 +631,7 @@ export interface FileRoutesByTo {
   '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
   '/inductions': typeof AuthenticatedInductionsRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
+  '/portal': typeof AuthenticatedPortalRouteWithChildren
   '/ppe': typeof AuthenticatedPpeRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/roles': typeof AuthenticatedRolesRouteWithChildren
@@ -402,6 +640,38 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersRoute
   '/waste': typeof AuthenticatedWasteRoute
   '/webhooks': typeof AuthenticatedWebhooksRoute
+  '/admin/activity': typeof AuthenticatedAdminActivityRoute
+  '/admin/assets': typeof AuthenticatedAdminAssetsRoute
+  '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/admin/companies': typeof AuthenticatedAdminCompaniesRouteWithChildren
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
+  '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
+  '/admin/incidents': typeof AuthenticatedAdminIncidentsRoute
+  '/admin/inductions': typeof AuthenticatedAdminInductionsRoute
+  '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/admin/ppe': typeof AuthenticatedAdminPpeRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/roles': typeof AuthenticatedAdminRolesRouteWithChildren
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/sites': typeof AuthenticatedAdminSitesRouteWithChildren
+  '/admin/tenants': typeof AuthenticatedAdminTenantsRoute
+  '/admin/training': typeof AuthenticatedAdminTrainingRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/waste': typeof AuthenticatedAdminWasteRoute
+  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
+  '/app/assets': typeof AuthenticatedAppAssetsRoute
+  '/app/audits': typeof AuthenticatedAppAuditsRouteWithChildren
+  '/app/dashboard': typeof AuthenticatedAppDashboardRoute
+  '/app/documents': typeof AuthenticatedAppDocumentsRoute
+  '/app/incidents': typeof AuthenticatedAppIncidentsRouteWithChildren
+  '/app/inductions': typeof AuthenticatedAppInductionsRoute
+  '/app/notifications': typeof AuthenticatedAppNotificationsRoute
+  '/app/ppe': typeof AuthenticatedAppPpeRoute
+  '/app/reports': typeof AuthenticatedAppReportsRoute
+  '/app/sites': typeof AuthenticatedAppSitesRoute
+  '/app/training': typeof AuthenticatedAppTrainingRoute
+  '/app/waste': typeof AuthenticatedAppWasteRoute
   '/audits/create': typeof AuthenticatedAuditsCreateRoute
   '/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/companies/create': typeof AuthenticatedCompaniesCreateRoute
@@ -409,65 +679,32 @@ export interface FileRoutesByTo {
   '/facilities/create': typeof AuthenticatedFacilitiesCreateRoute
   '/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/incidents/create': typeof AuthenticatedIncidentsCreateRoute
+  '/portal/audits': typeof AuthenticatedPortalAuditsRoute
+  '/portal/dashboard': typeof AuthenticatedPortalDashboardRoute
+  '/portal/documents': typeof AuthenticatedPortalDocumentsRoute
+  '/portal/feedback': typeof AuthenticatedPortalFeedbackRoute
+  '/portal/incidents': typeof AuthenticatedPortalIncidentsRoute
+  '/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
+  '/portal/reports': typeof AuthenticatedPortalReportsRoute
+  '/portal/sites': typeof AuthenticatedPortalSitesRoute
   '/roles/$id': typeof AuthenticatedRolesIdRoute
-  // Admin panel
-  '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/roles': typeof AuthenticatedAdminRolesRouteWithChildren
-  '/admin/roles/$id': typeof AuthenticatedAdminRolesIdRoute
-  '/admin/sites': typeof AuthenticatedAdminSitesRouteWithChildren
-  '/admin/sites/$id': typeof AuthenticatedAdminSitesIdRoute
-  '/admin/companies': typeof AuthenticatedAdminCompaniesRouteWithChildren
   '/admin/companies/$id': typeof AuthenticatedAdminCompaniesIdRoute
-  '/admin/incidents': typeof AuthenticatedAdminIncidentsRoute
-  '/admin/audits': typeof AuthenticatedAdminAuditsRoute
-  '/admin/training': typeof AuthenticatedAdminTrainingRoute
-  '/admin/inductions': typeof AuthenticatedAdminInductionsRoute
-  '/admin/ppe': typeof AuthenticatedAdminPpeRoute
-  '/admin/assets': typeof AuthenticatedAdminAssetsRoute
-  '/admin/waste': typeof AuthenticatedAdminWasteRoute
-  '/admin/documents': typeof AuthenticatedAdminDocumentsRoute
-  '/admin/reports': typeof AuthenticatedAdminReportsRoute
-  '/admin/activity': typeof AuthenticatedAdminActivityRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
-  '/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
-  // App panel
-  '/app': typeof AuthenticatedAppRouteWithChildren
-  '/app/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/app/incidents': typeof AuthenticatedAppIncidentsRouteWithChildren
+  '/admin/roles/$id': typeof AuthenticatedAdminRolesIdRoute
+  '/admin/sites/$id': typeof AuthenticatedAdminSitesIdRoute
+  '/app/audits/create': typeof AuthenticatedAppAuditsCreateRoute
   '/app/incidents/$id': typeof AuthenticatedAppIncidentsIdRoute
   '/app/incidents/create': typeof AuthenticatedAppIncidentsCreateRoute
-  '/app/audits': typeof AuthenticatedAppAuditsRouteWithChildren
-  '/app/audits/create': typeof AuthenticatedAppAuditsCreateRoute
-  '/app/training': typeof AuthenticatedAppTrainingRoute
-  '/app/inductions': typeof AuthenticatedAppInductionsRoute
-  '/app/ppe': typeof AuthenticatedAppPpeRoute
-  '/app/assets': typeof AuthenticatedAppAssetsRoute
-  '/app/waste': typeof AuthenticatedAppWasteRoute
-  '/app/documents': typeof AuthenticatedAppDocumentsRoute
-  '/app/sites': typeof AuthenticatedAppSitesRoute
-  '/app/reports': typeof AuthenticatedAppReportsRoute
-  '/app/notifications': typeof AuthenticatedAppNotificationsRoute
-  // Portal panel
-  '/portal': typeof AuthenticatedPortalRouteWithChildren
-  '/portal/dashboard': typeof AuthenticatedPortalDashboardRoute
-  '/portal/sites': typeof AuthenticatedPortalSitesRoute
-  '/portal/incidents': typeof AuthenticatedPortalIncidentsRoute
-  '/portal/audits': typeof AuthenticatedPortalAuditsRoute
-  '/portal/documents': typeof AuthenticatedPortalDocumentsRoute
-  '/portal/reports': typeof AuthenticatedPortalReportsRoute
-  '/portal/feedback': typeof AuthenticatedPortalFeedbackRoute
-  '/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/activity': typeof AuthenticatedActivityRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
   '/_authenticated/assets': typeof AuthenticatedAssetsRoute
   '/_authenticated/audits': typeof AuthenticatedAuditsRouteWithChildren
   '/_authenticated/companies': typeof AuthenticatedCompaniesRouteWithChildren
@@ -477,6 +714,7 @@ export interface FileRoutesById {
   '/_authenticated/incidents': typeof AuthenticatedIncidentsRouteWithChildren
   '/_authenticated/inductions': typeof AuthenticatedInductionsRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/portal': typeof AuthenticatedPortalRouteWithChildren
   '/_authenticated/ppe': typeof AuthenticatedPpeRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/roles': typeof AuthenticatedRolesRouteWithChildren
@@ -485,6 +723,38 @@ export interface FileRoutesById {
   '/_authenticated/users': typeof AuthenticatedUsersRoute
   '/_authenticated/waste': typeof AuthenticatedWasteRoute
   '/_authenticated/webhooks': typeof AuthenticatedWebhooksRoute
+  '/_authenticated/admin/activity': typeof AuthenticatedAdminActivityRoute
+  '/_authenticated/admin/assets': typeof AuthenticatedAdminAssetsRoute
+  '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/_authenticated/admin/companies': typeof AuthenticatedAdminCompaniesRouteWithChildren
+  '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/documents': typeof AuthenticatedAdminDocumentsRoute
+  '/_authenticated/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
+  '/_authenticated/admin/incidents': typeof AuthenticatedAdminIncidentsRoute
+  '/_authenticated/admin/inductions': typeof AuthenticatedAdminInductionsRoute
+  '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
+  '/_authenticated/admin/ppe': typeof AuthenticatedAdminPpeRoute
+  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/_authenticated/admin/roles': typeof AuthenticatedAdminRolesRouteWithChildren
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/sites': typeof AuthenticatedAdminSitesRouteWithChildren
+  '/_authenticated/admin/tenants': typeof AuthenticatedAdminTenantsRoute
+  '/_authenticated/admin/training': typeof AuthenticatedAdminTrainingRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/waste': typeof AuthenticatedAdminWasteRoute
+  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
+  '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRoute
+  '/_authenticated/app/audits': typeof AuthenticatedAppAuditsRouteWithChildren
+  '/_authenticated/app/dashboard': typeof AuthenticatedAppDashboardRoute
+  '/_authenticated/app/documents': typeof AuthenticatedAppDocumentsRoute
+  '/_authenticated/app/incidents': typeof AuthenticatedAppIncidentsRouteWithChildren
+  '/_authenticated/app/inductions': typeof AuthenticatedAppInductionsRoute
+  '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRoute
+  '/_authenticated/app/ppe': typeof AuthenticatedAppPpeRoute
+  '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
+  '/_authenticated/app/sites': typeof AuthenticatedAppSitesRoute
+  '/_authenticated/app/training': typeof AuthenticatedAppTrainingRoute
+  '/_authenticated/app/waste': typeof AuthenticatedAppWasteRoute
   '/_authenticated/audits/create': typeof AuthenticatedAuditsCreateRoute
   '/_authenticated/companies/$id': typeof AuthenticatedCompaniesIdRoute
   '/_authenticated/companies/create': typeof AuthenticatedCompaniesCreateRoute
@@ -492,65 +762,32 @@ export interface FileRoutesById {
   '/_authenticated/facilities/create': typeof AuthenticatedFacilitiesCreateRoute
   '/_authenticated/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/_authenticated/incidents/create': typeof AuthenticatedIncidentsCreateRoute
+  '/_authenticated/portal/audits': typeof AuthenticatedPortalAuditsRoute
+  '/_authenticated/portal/dashboard': typeof AuthenticatedPortalDashboardRoute
+  '/_authenticated/portal/documents': typeof AuthenticatedPortalDocumentsRoute
+  '/_authenticated/portal/feedback': typeof AuthenticatedPortalFeedbackRoute
+  '/_authenticated/portal/incidents': typeof AuthenticatedPortalIncidentsRoute
+  '/_authenticated/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
+  '/_authenticated/portal/reports': typeof AuthenticatedPortalReportsRoute
+  '/_authenticated/portal/sites': typeof AuthenticatedPortalSitesRoute
   '/_authenticated/roles/$id': typeof AuthenticatedRolesIdRoute
-  // Admin panel
-  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/_authenticated/admin/roles': typeof AuthenticatedAdminRolesRouteWithChildren
-  '/_authenticated/admin/roles/$id': typeof AuthenticatedAdminRolesIdRoute
-  '/_authenticated/admin/sites': typeof AuthenticatedAdminSitesRouteWithChildren
-  '/_authenticated/admin/sites/$id': typeof AuthenticatedAdminSitesIdRoute
-  '/_authenticated/admin/companies': typeof AuthenticatedAdminCompaniesRouteWithChildren
   '/_authenticated/admin/companies/$id': typeof AuthenticatedAdminCompaniesIdRoute
-  '/_authenticated/admin/incidents': typeof AuthenticatedAdminIncidentsRoute
-  '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
-  '/_authenticated/admin/training': typeof AuthenticatedAdminTrainingRoute
-  '/_authenticated/admin/inductions': typeof AuthenticatedAdminInductionsRoute
-  '/_authenticated/admin/ppe': typeof AuthenticatedAdminPpeRoute
-  '/_authenticated/admin/assets': typeof AuthenticatedAdminAssetsRoute
-  '/_authenticated/admin/waste': typeof AuthenticatedAdminWasteRoute
-  '/_authenticated/admin/documents': typeof AuthenticatedAdminDocumentsRoute
-  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
-  '/_authenticated/admin/activity': typeof AuthenticatedAdminActivityRoute
-  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/_authenticated/admin/webhooks': typeof AuthenticatedAdminWebhooksRoute
-  '/_authenticated/admin/notifications': typeof AuthenticatedAdminNotificationsRoute
-  '/_authenticated/admin/feedback': typeof AuthenticatedAdminFeedbackRoute
-  // App panel
-  '/_authenticated/app': typeof AuthenticatedAppRouteWithChildren
-  '/_authenticated/app/dashboard': typeof AuthenticatedAppDashboardRoute
-  '/_authenticated/app/incidents': typeof AuthenticatedAppIncidentsRouteWithChildren
+  '/_authenticated/admin/roles/$id': typeof AuthenticatedAdminRolesIdRoute
+  '/_authenticated/admin/sites/$id': typeof AuthenticatedAdminSitesIdRoute
+  '/_authenticated/app/audits/create': typeof AuthenticatedAppAuditsCreateRoute
   '/_authenticated/app/incidents/$id': typeof AuthenticatedAppIncidentsIdRoute
   '/_authenticated/app/incidents/create': typeof AuthenticatedAppIncidentsCreateRoute
-  '/_authenticated/app/audits': typeof AuthenticatedAppAuditsRouteWithChildren
-  '/_authenticated/app/audits/create': typeof AuthenticatedAppAuditsCreateRoute
-  '/_authenticated/app/training': typeof AuthenticatedAppTrainingRoute
-  '/_authenticated/app/inductions': typeof AuthenticatedAppInductionsRoute
-  '/_authenticated/app/ppe': typeof AuthenticatedAppPpeRoute
-  '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRoute
-  '/_authenticated/app/waste': typeof AuthenticatedAppWasteRoute
-  '/_authenticated/app/documents': typeof AuthenticatedAppDocumentsRoute
-  '/_authenticated/app/sites': typeof AuthenticatedAppSitesRoute
-  '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
-  '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRoute
-  // Portal panel
-  '/_authenticated/portal': typeof AuthenticatedPortalRouteWithChildren
-  '/_authenticated/portal/dashboard': typeof AuthenticatedPortalDashboardRoute
-  '/_authenticated/portal/sites': typeof AuthenticatedPortalSitesRoute
-  '/_authenticated/portal/incidents': typeof AuthenticatedPortalIncidentsRoute
-  '/_authenticated/portal/audits': typeof AuthenticatedPortalAuditsRoute
-  '/_authenticated/portal/documents': typeof AuthenticatedPortalDocumentsRoute
-  '/_authenticated/portal/reports': typeof AuthenticatedPortalReportsRoute
-  '/_authenticated/portal/feedback': typeof AuthenticatedPortalFeedbackRoute
-  '/_authenticated/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/activity'
+    | '/admin'
+    | '/app'
     | '/assets'
     | '/audits'
     | '/companies'
@@ -560,6 +797,7 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/inductions'
     | '/notifications'
+    | '/portal'
     | '/ppe'
     | '/reports'
     | '/roles'
@@ -568,6 +806,38 @@ export interface FileRouteTypes {
     | '/users'
     | '/waste'
     | '/webhooks'
+    | '/admin/activity'
+    | '/admin/assets'
+    | '/admin/audits'
+    | '/admin/companies'
+    | '/admin/dashboard'
+    | '/admin/documents'
+    | '/admin/feedback'
+    | '/admin/incidents'
+    | '/admin/inductions'
+    | '/admin/notifications'
+    | '/admin/ppe'
+    | '/admin/reports'
+    | '/admin/roles'
+    | '/admin/settings'
+    | '/admin/sites'
+    | '/admin/tenants'
+    | '/admin/training'
+    | '/admin/users'
+    | '/admin/waste'
+    | '/admin/webhooks'
+    | '/app/assets'
+    | '/app/audits'
+    | '/app/dashboard'
+    | '/app/documents'
+    | '/app/incidents'
+    | '/app/inductions'
+    | '/app/notifications'
+    | '/app/ppe'
+    | '/app/reports'
+    | '/app/sites'
+    | '/app/training'
+    | '/app/waste'
     | '/audits/create'
     | '/companies/$id'
     | '/companies/create'
@@ -575,60 +845,30 @@ export interface FileRouteTypes {
     | '/facilities/create'
     | '/incidents/$id'
     | '/incidents/create'
+    | '/portal/audits'
+    | '/portal/dashboard'
+    | '/portal/documents'
+    | '/portal/feedback'
+    | '/portal/incidents'
+    | '/portal/notifications'
+    | '/portal/reports'
+    | '/portal/sites'
     | '/roles/$id'
-    | '/admin'
-    | '/admin/dashboard'
-    | '/admin/users'
-    | '/admin/roles'
-    | '/admin/roles/$id'
-    | '/admin/sites'
-    | '/admin/sites/$id'
-    | '/admin/companies'
     | '/admin/companies/$id'
-    | '/admin/incidents'
-    | '/admin/audits'
-    | '/admin/training'
-    | '/admin/inductions'
-    | '/admin/ppe'
-    | '/admin/assets'
-    | '/admin/waste'
-    | '/admin/documents'
-    | '/admin/reports'
-    | '/admin/activity'
-    | '/admin/settings'
-    | '/admin/webhooks'
-    | '/admin/notifications'
-    | '/admin/feedback'
-    | '/app'
-    | '/app/dashboard'
-    | '/app/incidents'
+    | '/admin/roles/$id'
+    | '/admin/sites/$id'
+    | '/app/audits/create'
     | '/app/incidents/$id'
     | '/app/incidents/create'
-    | '/app/audits'
-    | '/app/audits/create'
-    | '/app/training'
-    | '/app/inductions'
-    | '/app/ppe'
-    | '/app/assets'
-    | '/app/waste'
-    | '/app/documents'
-    | '/app/sites'
-    | '/app/reports'
-    | '/app/notifications'
-    | '/portal'
-    | '/portal/dashboard'
-    | '/portal/sites'
-    | '/portal/incidents'
-    | '/portal/audits'
-    | '/portal/documents'
-    | '/portal/reports'
-    | '/portal/feedback'
-    | '/portal/notifications'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/activity'
+    | '/admin'
+    | '/app'
     | '/assets'
     | '/audits'
     | '/companies'
@@ -638,6 +878,7 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/inductions'
     | '/notifications'
+    | '/portal'
     | '/ppe'
     | '/reports'
     | '/roles'
@@ -646,6 +887,38 @@ export interface FileRouteTypes {
     | '/users'
     | '/waste'
     | '/webhooks'
+    | '/admin/activity'
+    | '/admin/assets'
+    | '/admin/audits'
+    | '/admin/companies'
+    | '/admin/dashboard'
+    | '/admin/documents'
+    | '/admin/feedback'
+    | '/admin/incidents'
+    | '/admin/inductions'
+    | '/admin/notifications'
+    | '/admin/ppe'
+    | '/admin/reports'
+    | '/admin/roles'
+    | '/admin/settings'
+    | '/admin/sites'
+    | '/admin/tenants'
+    | '/admin/training'
+    | '/admin/users'
+    | '/admin/waste'
+    | '/admin/webhooks'
+    | '/app/assets'
+    | '/app/audits'
+    | '/app/dashboard'
+    | '/app/documents'
+    | '/app/incidents'
+    | '/app/inductions'
+    | '/app/notifications'
+    | '/app/ppe'
+    | '/app/reports'
+    | '/app/sites'
+    | '/app/training'
+    | '/app/waste'
     | '/audits/create'
     | '/companies/$id'
     | '/companies/create'
@@ -653,61 +926,31 @@ export interface FileRouteTypes {
     | '/facilities/create'
     | '/incidents/$id'
     | '/incidents/create'
+    | '/portal/audits'
+    | '/portal/dashboard'
+    | '/portal/documents'
+    | '/portal/feedback'
+    | '/portal/incidents'
+    | '/portal/notifications'
+    | '/portal/reports'
+    | '/portal/sites'
     | '/roles/$id'
-    | '/admin'
-    | '/admin/dashboard'
-    | '/admin/users'
-    | '/admin/roles'
-    | '/admin/roles/$id'
-    | '/admin/sites'
-    | '/admin/sites/$id'
-    | '/admin/companies'
     | '/admin/companies/$id'
-    | '/admin/incidents'
-    | '/admin/audits'
-    | '/admin/training'
-    | '/admin/inductions'
-    | '/admin/ppe'
-    | '/admin/assets'
-    | '/admin/waste'
-    | '/admin/documents'
-    | '/admin/reports'
-    | '/admin/activity'
-    | '/admin/settings'
-    | '/admin/webhooks'
-    | '/admin/notifications'
-    | '/admin/feedback'
-    | '/app'
-    | '/app/dashboard'
-    | '/app/incidents'
+    | '/admin/roles/$id'
+    | '/admin/sites/$id'
+    | '/app/audits/create'
     | '/app/incidents/$id'
     | '/app/incidents/create'
-    | '/app/audits'
-    | '/app/audits/create'
-    | '/app/training'
-    | '/app/inductions'
-    | '/app/ppe'
-    | '/app/assets'
-    | '/app/waste'
-    | '/app/documents'
-    | '/app/sites'
-    | '/app/reports'
-    | '/app/notifications'
-    | '/portal'
-    | '/portal/dashboard'
-    | '/portal/sites'
-    | '/portal/incidents'
-    | '/portal/audits'
-    | '/portal/documents'
-    | '/portal/reports'
-    | '/portal/feedback'
-    | '/portal/notifications'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/forgot-password'
     | '/login'
+    | '/reset-password'
     | '/_authenticated/activity'
+    | '/_authenticated/admin'
+    | '/_authenticated/app'
     | '/_authenticated/assets'
     | '/_authenticated/audits'
     | '/_authenticated/companies'
@@ -717,6 +960,7 @@ export interface FileRouteTypes {
     | '/_authenticated/incidents'
     | '/_authenticated/inductions'
     | '/_authenticated/notifications'
+    | '/_authenticated/portal'
     | '/_authenticated/ppe'
     | '/_authenticated/reports'
     | '/_authenticated/roles'
@@ -725,6 +969,38 @@ export interface FileRouteTypes {
     | '/_authenticated/users'
     | '/_authenticated/waste'
     | '/_authenticated/webhooks'
+    | '/_authenticated/admin/activity'
+    | '/_authenticated/admin/assets'
+    | '/_authenticated/admin/audits'
+    | '/_authenticated/admin/companies'
+    | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/documents'
+    | '/_authenticated/admin/feedback'
+    | '/_authenticated/admin/incidents'
+    | '/_authenticated/admin/inductions'
+    | '/_authenticated/admin/notifications'
+    | '/_authenticated/admin/ppe'
+    | '/_authenticated/admin/reports'
+    | '/_authenticated/admin/roles'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/sites'
+    | '/_authenticated/admin/tenants'
+    | '/_authenticated/admin/training'
+    | '/_authenticated/admin/users'
+    | '/_authenticated/admin/waste'
+    | '/_authenticated/admin/webhooks'
+    | '/_authenticated/app/assets'
+    | '/_authenticated/app/audits'
+    | '/_authenticated/app/dashboard'
+    | '/_authenticated/app/documents'
+    | '/_authenticated/app/incidents'
+    | '/_authenticated/app/inductions'
+    | '/_authenticated/app/notifications'
+    | '/_authenticated/app/ppe'
+    | '/_authenticated/app/reports'
+    | '/_authenticated/app/sites'
+    | '/_authenticated/app/training'
+    | '/_authenticated/app/waste'
     | '/_authenticated/audits/create'
     | '/_authenticated/companies/$id'
     | '/_authenticated/companies/create'
@@ -732,70 +1008,52 @@ export interface FileRouteTypes {
     | '/_authenticated/facilities/create'
     | '/_authenticated/incidents/$id'
     | '/_authenticated/incidents/create'
+    | '/_authenticated/portal/audits'
+    | '/_authenticated/portal/dashboard'
+    | '/_authenticated/portal/documents'
+    | '/_authenticated/portal/feedback'
+    | '/_authenticated/portal/incidents'
+    | '/_authenticated/portal/notifications'
+    | '/_authenticated/portal/reports'
+    | '/_authenticated/portal/sites'
     | '/_authenticated/roles/$id'
-    | '/_authenticated/admin'
-    | '/_authenticated/admin/dashboard'
-    | '/_authenticated/admin/users'
-    | '/_authenticated/admin/roles'
-    | '/_authenticated/admin/roles/$id'
-    | '/_authenticated/admin/sites'
-    | '/_authenticated/admin/sites/$id'
-    | '/_authenticated/admin/companies'
     | '/_authenticated/admin/companies/$id'
-    | '/_authenticated/admin/incidents'
-    | '/_authenticated/admin/audits'
-    | '/_authenticated/admin/training'
-    | '/_authenticated/admin/inductions'
-    | '/_authenticated/admin/ppe'
-    | '/_authenticated/admin/assets'
-    | '/_authenticated/admin/waste'
-    | '/_authenticated/admin/documents'
-    | '/_authenticated/admin/reports'
-    | '/_authenticated/admin/activity'
-    | '/_authenticated/admin/settings'
-    | '/_authenticated/admin/webhooks'
-    | '/_authenticated/admin/notifications'
-    | '/_authenticated/admin/feedback'
-    | '/_authenticated/app'
-    | '/_authenticated/app/dashboard'
-    | '/_authenticated/app/incidents'
+    | '/_authenticated/admin/roles/$id'
+    | '/_authenticated/admin/sites/$id'
+    | '/_authenticated/app/audits/create'
     | '/_authenticated/app/incidents/$id'
     | '/_authenticated/app/incidents/create'
-    | '/_authenticated/app/audits'
-    | '/_authenticated/app/audits/create'
-    | '/_authenticated/app/training'
-    | '/_authenticated/app/inductions'
-    | '/_authenticated/app/ppe'
-    | '/_authenticated/app/assets'
-    | '/_authenticated/app/waste'
-    | '/_authenticated/app/documents'
-    | '/_authenticated/app/sites'
-    | '/_authenticated/app/reports'
-    | '/_authenticated/app/notifications'
-    | '/_authenticated/portal'
-    | '/_authenticated/portal/dashboard'
-    | '/_authenticated/portal/sites'
-    | '/_authenticated/portal/incidents'
-    | '/_authenticated/portal/audits'
-    | '/_authenticated/portal/documents'
-    | '/_authenticated/portal/reports'
-    | '/_authenticated/portal/feedback'
-    | '/_authenticated/portal/notifications'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -868,6 +1126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPpeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/portal': {
+      id: '/_authenticated/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof AuthenticatedPortalRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/notifications': {
       id: '/_authenticated/notifications'
       path: '/notifications'
@@ -931,12 +1196,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAssetsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/app': {
+      id: '/_authenticated/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthenticatedAppRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/activity': {
       id: '/_authenticated/activity'
       path: '/activity'
       fullPath: '/activity'
       preLoaderRoute: typeof AuthenticatedActivityRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/roles/$id': {
+      id: '/_authenticated/roles/$id'
+      path: '/$id'
+      fullPath: '/roles/$id'
+      preLoaderRoute: typeof AuthenticatedRolesIdRouteImport
+      parentRoute: typeof AuthenticatedRolesRoute
+    }
+    '/_authenticated/portal/sites': {
+      id: '/_authenticated/portal/sites'
+      path: '/sites'
+      fullPath: '/portal/sites'
+      preLoaderRoute: typeof AuthenticatedPortalSitesRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
+    '/_authenticated/portal/reports': {
+      id: '/_authenticated/portal/reports'
+      path: '/reports'
+      fullPath: '/portal/reports'
+      preLoaderRoute: typeof AuthenticatedPortalReportsRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
+    '/_authenticated/portal/notifications': {
+      id: '/_authenticated/portal/notifications'
+      path: '/notifications'
+      fullPath: '/portal/notifications'
+      preLoaderRoute: typeof AuthenticatedPortalNotificationsRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
+    '/_authenticated/portal/incidents': {
+      id: '/_authenticated/portal/incidents'
+      path: '/incidents'
+      fullPath: '/portal/incidents'
+      preLoaderRoute: typeof AuthenticatedPortalIncidentsRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
+    '/_authenticated/portal/feedback': {
+      id: '/_authenticated/portal/feedback'
+      path: '/feedback'
+      fullPath: '/portal/feedback'
+      preLoaderRoute: typeof AuthenticatedPortalFeedbackRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
+    '/_authenticated/portal/documents': {
+      id: '/_authenticated/portal/documents'
+      path: '/documents'
+      fullPath: '/portal/documents'
+      preLoaderRoute: typeof AuthenticatedPortalDocumentsRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
+    '/_authenticated/portal/dashboard': {
+      id: '/_authenticated/portal/dashboard'
+      path: '/dashboard'
+      fullPath: '/portal/dashboard'
+      preLoaderRoute: typeof AuthenticatedPortalDashboardRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
+    '/_authenticated/portal/audits': {
+      id: '/_authenticated/portal/audits'
+      path: '/audits'
+      fullPath: '/portal/audits'
+      preLoaderRoute: typeof AuthenticatedPortalAuditsRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
     }
     '/_authenticated/incidents/create': {
       id: '/_authenticated/incidents/create'
@@ -987,253 +1329,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAuditsCreateRouteImport
       parentRoute: typeof AuthenticatedAuditsRoute
     }
-    '/_authenticated/roles/$id': {
-      id: '/_authenticated/roles/$id'
-      path: '/$id'
-      fullPath: '/roles/$id'
-      preLoaderRoute: typeof AuthenticatedRolesIdRouteImport
-      parentRoute: typeof AuthenticatedRolesRoute
-    }
-    // ── Admin panel ─────────────────────────────────────────────────────────────
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/admin/dashboard': {
-      id: '/_authenticated/admin/dashboard'
-      path: '/dashboard'
-      fullPath: '/admin/dashboard'
-      preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/users': {
-      id: '/_authenticated/admin/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/roles': {
-      id: '/_authenticated/admin/roles'
-      path: '/roles'
-      fullPath: '/admin/roles'
-      preLoaderRoute: typeof AuthenticatedAdminRolesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/roles/$id': {
-      id: '/_authenticated/admin/roles/$id'
-      path: '/$id'
-      fullPath: '/admin/roles/$id'
-      preLoaderRoute: typeof AuthenticatedAdminRolesIdRouteImport
-      parentRoute: typeof AuthenticatedAdminRolesRoute
-    }
-    '/_authenticated/admin/sites': {
-      id: '/_authenticated/admin/sites'
-      path: '/sites'
-      fullPath: '/admin/sites'
-      preLoaderRoute: typeof AuthenticatedAdminSitesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/sites/$id': {
-      id: '/_authenticated/admin/sites/$id'
-      path: '/$id'
-      fullPath: '/admin/sites/$id'
-      preLoaderRoute: typeof AuthenticatedAdminSitesIdRouteImport
-      parentRoute: typeof AuthenticatedAdminSitesRoute
-    }
-    '/_authenticated/admin/companies': {
-      id: '/_authenticated/admin/companies'
-      path: '/companies'
-      fullPath: '/admin/companies'
-      preLoaderRoute: typeof AuthenticatedAdminCompaniesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/companies/$id': {
-      id: '/_authenticated/admin/companies/$id'
-      path: '/$id'
-      fullPath: '/admin/companies/$id'
-      preLoaderRoute: typeof AuthenticatedAdminCompaniesIdRouteImport
-      parentRoute: typeof AuthenticatedAdminCompaniesRoute
-    }
-    '/_authenticated/admin/incidents': {
-      id: '/_authenticated/admin/incidents'
-      path: '/incidents'
-      fullPath: '/admin/incidents'
-      preLoaderRoute: typeof AuthenticatedAdminIncidentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/audits': {
-      id: '/_authenticated/admin/audits'
-      path: '/audits'
-      fullPath: '/admin/audits'
-      preLoaderRoute: typeof AuthenticatedAdminAuditsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/training': {
-      id: '/_authenticated/admin/training'
-      path: '/training'
-      fullPath: '/admin/training'
-      preLoaderRoute: typeof AuthenticatedAdminTrainingRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/inductions': {
-      id: '/_authenticated/admin/inductions'
-      path: '/inductions'
-      fullPath: '/admin/inductions'
-      preLoaderRoute: typeof AuthenticatedAdminInductionsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/ppe': {
-      id: '/_authenticated/admin/ppe'
-      path: '/ppe'
-      fullPath: '/admin/ppe'
-      preLoaderRoute: typeof AuthenticatedAdminPpeRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/assets': {
-      id: '/_authenticated/admin/assets'
-      path: '/assets'
-      fullPath: '/admin/assets'
-      preLoaderRoute: typeof AuthenticatedAdminAssetsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/waste': {
-      id: '/_authenticated/admin/waste'
-      path: '/waste'
-      fullPath: '/admin/waste'
-      preLoaderRoute: typeof AuthenticatedAdminWasteRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/documents': {
-      id: '/_authenticated/admin/documents'
-      path: '/documents'
-      fullPath: '/admin/documents'
-      preLoaderRoute: typeof AuthenticatedAdminDocumentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/reports': {
-      id: '/_authenticated/admin/reports'
-      path: '/reports'
-      fullPath: '/admin/reports'
-      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/activity': {
-      id: '/_authenticated/admin/activity'
-      path: '/activity'
-      fullPath: '/admin/activity'
-      preLoaderRoute: typeof AuthenticatedAdminActivityRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/settings': {
-      id: '/_authenticated/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/webhooks': {
-      id: '/_authenticated/admin/webhooks'
-      path: '/webhooks'
-      fullPath: '/admin/webhooks'
-      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/notifications': {
-      id: '/_authenticated/admin/notifications'
-      path: '/notifications'
-      fullPath: '/admin/notifications'
-      preLoaderRoute: typeof AuthenticatedAdminNotificationsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/feedback': {
-      id: '/_authenticated/admin/feedback'
-      path: '/feedback'
-      fullPath: '/admin/feedback'
-      preLoaderRoute: typeof AuthenticatedAdminFeedbackRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    // ── App panel ───────────────────────────────────────────────────────────────
-    '/_authenticated/app': {
-      id: '/_authenticated/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AuthenticatedAppRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/app/dashboard': {
-      id: '/_authenticated/app/dashboard'
-      path: '/dashboard'
-      fullPath: '/app/dashboard'
-      preLoaderRoute: typeof AuthenticatedAppDashboardRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/incidents': {
-      id: '/_authenticated/app/incidents'
-      path: '/incidents'
-      fullPath: '/app/incidents'
-      preLoaderRoute: typeof AuthenticatedAppIncidentsRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/incidents/$id': {
-      id: '/_authenticated/app/incidents/$id'
-      path: '/$id'
-      fullPath: '/app/incidents/$id'
-      preLoaderRoute: typeof AuthenticatedAppIncidentsIdRouteImport
-      parentRoute: typeof AuthenticatedAppIncidentsRoute
-    }
-    '/_authenticated/app/incidents/create': {
-      id: '/_authenticated/app/incidents/create'
-      path: '/create'
-      fullPath: '/app/incidents/create'
-      preLoaderRoute: typeof AuthenticatedAppIncidentsCreateRouteImport
-      parentRoute: typeof AuthenticatedAppIncidentsRoute
-    }
-    '/_authenticated/app/audits': {
-      id: '/_authenticated/app/audits'
-      path: '/audits'
-      fullPath: '/app/audits'
-      preLoaderRoute: typeof AuthenticatedAppAuditsRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/audits/create': {
-      id: '/_authenticated/app/audits/create'
-      path: '/create'
-      fullPath: '/app/audits/create'
-      preLoaderRoute: typeof AuthenticatedAppAuditsCreateRouteImport
-      parentRoute: typeof AuthenticatedAppAuditsRoute
-    }
-    '/_authenticated/app/training': {
-      id: '/_authenticated/app/training'
-      path: '/training'
-      fullPath: '/app/training'
-      preLoaderRoute: typeof AuthenticatedAppTrainingRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/inductions': {
-      id: '/_authenticated/app/inductions'
-      path: '/inductions'
-      fullPath: '/app/inductions'
-      preLoaderRoute: typeof AuthenticatedAppInductionsRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/ppe': {
-      id: '/_authenticated/app/ppe'
-      path: '/ppe'
-      fullPath: '/app/ppe'
-      preLoaderRoute: typeof AuthenticatedAppPpeRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
-    '/_authenticated/app/assets': {
-      id: '/_authenticated/app/assets'
-      path: '/assets'
-      fullPath: '/app/assets'
-      preLoaderRoute: typeof AuthenticatedAppAssetsRouteImport
-      parentRoute: typeof AuthenticatedAppRoute
-    }
     '/_authenticated/app/waste': {
       id: '/_authenticated/app/waste'
       path: '/waste'
@@ -1241,11 +1336,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppWasteRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/app/documents': {
-      id: '/_authenticated/app/documents'
-      path: '/documents'
-      fullPath: '/app/documents'
-      preLoaderRoute: typeof AuthenticatedAppDocumentsRouteImport
+    '/_authenticated/app/training': {
+      id: '/_authenticated/app/training'
+      path: '/training'
+      fullPath: '/app/training'
+      preLoaderRoute: typeof AuthenticatedAppTrainingRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
     '/_authenticated/app/sites': {
@@ -1262,6 +1357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppReportsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
+    '/_authenticated/app/ppe': {
+      id: '/_authenticated/app/ppe'
+      path: '/ppe'
+      fullPath: '/app/ppe'
+      preLoaderRoute: typeof AuthenticatedAppPpeRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
     '/_authenticated/app/notifications': {
       id: '/_authenticated/app/notifications'
       path: '/notifications'
@@ -1269,83 +1371,387 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppNotificationsRouteImport
       parentRoute: typeof AuthenticatedAppRoute
     }
-    // ── Portal panel ────────────────────────────────────────────────────────────
-    '/_authenticated/portal': {
-      id: '/_authenticated/portal'
-      path: '/portal'
-      fullPath: '/portal'
-      preLoaderRoute: typeof AuthenticatedPortalRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/_authenticated/app/inductions': {
+      id: '/_authenticated/app/inductions'
+      path: '/inductions'
+      fullPath: '/app/inductions'
+      preLoaderRoute: typeof AuthenticatedAppInductionsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/portal/dashboard': {
-      id: '/_authenticated/portal/dashboard'
-      path: '/dashboard'
-      fullPath: '/portal/dashboard'
-      preLoaderRoute: typeof AuthenticatedPortalDashboardRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
-    }
-    '/_authenticated/portal/sites': {
-      id: '/_authenticated/portal/sites'
-      path: '/sites'
-      fullPath: '/portal/sites'
-      preLoaderRoute: typeof AuthenticatedPortalSitesRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
-    }
-    '/_authenticated/portal/incidents': {
-      id: '/_authenticated/portal/incidents'
+    '/_authenticated/app/incidents': {
+      id: '/_authenticated/app/incidents'
       path: '/incidents'
-      fullPath: '/portal/incidents'
-      preLoaderRoute: typeof AuthenticatedPortalIncidentsRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
+      fullPath: '/app/incidents'
+      preLoaderRoute: typeof AuthenticatedAppIncidentsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/portal/audits': {
-      id: '/_authenticated/portal/audits'
-      path: '/audits'
-      fullPath: '/portal/audits'
-      preLoaderRoute: typeof AuthenticatedPortalAuditsRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
-    }
-    '/_authenticated/portal/documents': {
-      id: '/_authenticated/portal/documents'
+    '/_authenticated/app/documents': {
+      id: '/_authenticated/app/documents'
       path: '/documents'
-      fullPath: '/portal/documents'
-      preLoaderRoute: typeof AuthenticatedPortalDocumentsRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
+      fullPath: '/app/documents'
+      preLoaderRoute: typeof AuthenticatedAppDocumentsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
     }
-    '/_authenticated/portal/reports': {
-      id: '/_authenticated/portal/reports'
+    '/_authenticated/app/dashboard': {
+      id: '/_authenticated/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AuthenticatedAppDashboardRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/audits': {
+      id: '/_authenticated/app/audits'
+      path: '/audits'
+      fullPath: '/app/audits'
+      preLoaderRoute: typeof AuthenticatedAppAuditsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/app/assets': {
+      id: '/_authenticated/app/assets'
+      path: '/assets'
+      fullPath: '/app/assets'
+      preLoaderRoute: typeof AuthenticatedAppAssetsRouteImport
+      parentRoute: typeof AuthenticatedAppRoute
+    }
+    '/_authenticated/admin/webhooks': {
+      id: '/_authenticated/admin/webhooks'
+      path: '/webhooks'
+      fullPath: '/admin/webhooks'
+      preLoaderRoute: typeof AuthenticatedAdminWebhooksRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/waste': {
+      id: '/_authenticated/admin/waste'
+      path: '/waste'
+      fullPath: '/admin/waste'
+      preLoaderRoute: typeof AuthenticatedAdminWasteRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/training': {
+      id: '/_authenticated/admin/training'
+      path: '/training'
+      fullPath: '/admin/training'
+      preLoaderRoute: typeof AuthenticatedAdminTrainingRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/tenants': {
+      id: '/_authenticated/admin/tenants'
+      path: '/tenants'
+      fullPath: '/admin/tenants'
+      preLoaderRoute: typeof AuthenticatedAdminTenantsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/sites': {
+      id: '/_authenticated/admin/sites'
+      path: '/sites'
+      fullPath: '/admin/sites'
+      preLoaderRoute: typeof AuthenticatedAdminSitesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/roles': {
+      id: '/_authenticated/admin/roles'
+      path: '/roles'
+      fullPath: '/admin/roles'
+      preLoaderRoute: typeof AuthenticatedAdminRolesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
       path: '/reports'
-      fullPath: '/portal/reports'
-      preLoaderRoute: typeof AuthenticatedPortalReportsRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/portal/feedback': {
-      id: '/_authenticated/portal/feedback'
-      path: '/feedback'
-      fullPath: '/portal/feedback'
-      preLoaderRoute: typeof AuthenticatedPortalFeedbackRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
+    '/_authenticated/admin/ppe': {
+      id: '/_authenticated/admin/ppe'
+      path: '/ppe'
+      fullPath: '/admin/ppe'
+      preLoaderRoute: typeof AuthenticatedAdminPpeRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/portal/notifications': {
-      id: '/_authenticated/portal/notifications'
+    '/_authenticated/admin/notifications': {
+      id: '/_authenticated/admin/notifications'
       path: '/notifications'
-      fullPath: '/portal/notifications'
-      preLoaderRoute: typeof AuthenticatedPortalNotificationsRouteImport
-      parentRoute: typeof AuthenticatedPortalRoute
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AuthenticatedAdminNotificationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/inductions': {
+      id: '/_authenticated/admin/inductions'
+      path: '/inductions'
+      fullPath: '/admin/inductions'
+      preLoaderRoute: typeof AuthenticatedAdminInductionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/incidents': {
+      id: '/_authenticated/admin/incidents'
+      path: '/incidents'
+      fullPath: '/admin/incidents'
+      preLoaderRoute: typeof AuthenticatedAdminIncidentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/feedback': {
+      id: '/_authenticated/admin/feedback'
+      path: '/feedback'
+      fullPath: '/admin/feedback'
+      preLoaderRoute: typeof AuthenticatedAdminFeedbackRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/documents': {
+      id: '/_authenticated/admin/documents'
+      path: '/documents'
+      fullPath: '/admin/documents'
+      preLoaderRoute: typeof AuthenticatedAdminDocumentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dashboard': {
+      id: '/_authenticated/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/companies': {
+      id: '/_authenticated/admin/companies'
+      path: '/companies'
+      fullPath: '/admin/companies'
+      preLoaderRoute: typeof AuthenticatedAdminCompaniesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/audits': {
+      id: '/_authenticated/admin/audits'
+      path: '/audits'
+      fullPath: '/admin/audits'
+      preLoaderRoute: typeof AuthenticatedAdminAuditsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/assets': {
+      id: '/_authenticated/admin/assets'
+      path: '/assets'
+      fullPath: '/admin/assets'
+      preLoaderRoute: typeof AuthenticatedAdminAssetsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/activity': {
+      id: '/_authenticated/admin/activity'
+      path: '/activity'
+      fullPath: '/admin/activity'
+      preLoaderRoute: typeof AuthenticatedAdminActivityRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/app/incidents/create': {
+      id: '/_authenticated/app/incidents/create'
+      path: '/create'
+      fullPath: '/app/incidents/create'
+      preLoaderRoute: typeof AuthenticatedAppIncidentsCreateRouteImport
+      parentRoute: typeof AuthenticatedAppIncidentsRoute
+    }
+    '/_authenticated/app/incidents/$id': {
+      id: '/_authenticated/app/incidents/$id'
+      path: '/$id'
+      fullPath: '/app/incidents/$id'
+      preLoaderRoute: typeof AuthenticatedAppIncidentsIdRouteImport
+      parentRoute: typeof AuthenticatedAppIncidentsRoute
+    }
+    '/_authenticated/app/audits/create': {
+      id: '/_authenticated/app/audits/create'
+      path: '/create'
+      fullPath: '/app/audits/create'
+      preLoaderRoute: typeof AuthenticatedAppAuditsCreateRouteImport
+      parentRoute: typeof AuthenticatedAppAuditsRoute
+    }
+    '/_authenticated/admin/sites/$id': {
+      id: '/_authenticated/admin/sites/$id'
+      path: '/$id'
+      fullPath: '/admin/sites/$id'
+      preLoaderRoute: typeof AuthenticatedAdminSitesIdRouteImport
+      parentRoute: typeof AuthenticatedAdminSitesRoute
+    }
+    '/_authenticated/admin/roles/$id': {
+      id: '/_authenticated/admin/roles/$id'
+      path: '/$id'
+      fullPath: '/admin/roles/$id'
+      preLoaderRoute: typeof AuthenticatedAdminRolesIdRouteImport
+      parentRoute: typeof AuthenticatedAdminRolesRoute
+    }
+    '/_authenticated/admin/companies/$id': {
+      id: '/_authenticated/admin/companies/$id'
+      path: '/$id'
+      fullPath: '/admin/companies/$id'
+      preLoaderRoute: typeof AuthenticatedAdminCompaniesIdRouteImport
+      parentRoute: typeof AuthenticatedAdminCompaniesRoute
     }
   }
 }
 
-interface AuthenticatedRolesRouteChildren {
-  AuthenticatedRolesIdRoute: typeof AuthenticatedRolesIdRoute
+interface AuthenticatedAdminCompaniesRouteChildren {
+  AuthenticatedAdminCompaniesIdRoute: typeof AuthenticatedAdminCompaniesIdRoute
 }
 
-const AuthenticatedRolesRouteChildren: AuthenticatedRolesRouteChildren = {
-  AuthenticatedRolesIdRoute: AuthenticatedRolesIdRoute,
+const AuthenticatedAdminCompaniesRouteChildren: AuthenticatedAdminCompaniesRouteChildren =
+  {
+    AuthenticatedAdminCompaniesIdRoute: AuthenticatedAdminCompaniesIdRoute,
+  }
+
+const AuthenticatedAdminCompaniesRouteWithChildren =
+  AuthenticatedAdminCompaniesRoute._addFileChildren(
+    AuthenticatedAdminCompaniesRouteChildren,
+  )
+
+interface AuthenticatedAdminRolesRouteChildren {
+  AuthenticatedAdminRolesIdRoute: typeof AuthenticatedAdminRolesIdRoute
 }
 
-const AuthenticatedRolesRouteWithChildren =
-  AuthenticatedRolesRoute._addFileChildren(AuthenticatedRolesRouteChildren)
+const AuthenticatedAdminRolesRouteChildren: AuthenticatedAdminRolesRouteChildren =
+  {
+    AuthenticatedAdminRolesIdRoute: AuthenticatedAdminRolesIdRoute,
+  }
+
+const AuthenticatedAdminRolesRouteWithChildren =
+  AuthenticatedAdminRolesRoute._addFileChildren(
+    AuthenticatedAdminRolesRouteChildren,
+  )
+
+interface AuthenticatedAdminSitesRouteChildren {
+  AuthenticatedAdminSitesIdRoute: typeof AuthenticatedAdminSitesIdRoute
+}
+
+const AuthenticatedAdminSitesRouteChildren: AuthenticatedAdminSitesRouteChildren =
+  {
+    AuthenticatedAdminSitesIdRoute: AuthenticatedAdminSitesIdRoute,
+  }
+
+const AuthenticatedAdminSitesRouteWithChildren =
+  AuthenticatedAdminSitesRoute._addFileChildren(
+    AuthenticatedAdminSitesRouteChildren,
+  )
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminActivityRoute: typeof AuthenticatedAdminActivityRoute
+  AuthenticatedAdminAssetsRoute: typeof AuthenticatedAdminAssetsRoute
+  AuthenticatedAdminAuditsRoute: typeof AuthenticatedAdminAuditsRoute
+  AuthenticatedAdminCompaniesRoute: typeof AuthenticatedAdminCompaniesRouteWithChildren
+  AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminDocumentsRoute: typeof AuthenticatedAdminDocumentsRoute
+  AuthenticatedAdminFeedbackRoute: typeof AuthenticatedAdminFeedbackRoute
+  AuthenticatedAdminIncidentsRoute: typeof AuthenticatedAdminIncidentsRoute
+  AuthenticatedAdminInductionsRoute: typeof AuthenticatedAdminInductionsRoute
+  AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
+  AuthenticatedAdminPpeRoute: typeof AuthenticatedAdminPpeRoute
+  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedAdminRolesRoute: typeof AuthenticatedAdminRolesRouteWithChildren
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminSitesRoute: typeof AuthenticatedAdminSitesRouteWithChildren
+  AuthenticatedAdminTenantsRoute: typeof AuthenticatedAdminTenantsRoute
+  AuthenticatedAdminTrainingRoute: typeof AuthenticatedAdminTrainingRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminWasteRoute: typeof AuthenticatedAdminWasteRoute
+  AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminActivityRoute: AuthenticatedAdminActivityRoute,
+  AuthenticatedAdminAssetsRoute: AuthenticatedAdminAssetsRoute,
+  AuthenticatedAdminAuditsRoute: AuthenticatedAdminAuditsRoute,
+  AuthenticatedAdminCompaniesRoute:
+    AuthenticatedAdminCompaniesRouteWithChildren,
+  AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminDocumentsRoute: AuthenticatedAdminDocumentsRoute,
+  AuthenticatedAdminFeedbackRoute: AuthenticatedAdminFeedbackRoute,
+  AuthenticatedAdminIncidentsRoute: AuthenticatedAdminIncidentsRoute,
+  AuthenticatedAdminInductionsRoute: AuthenticatedAdminInductionsRoute,
+  AuthenticatedAdminNotificationsRoute: AuthenticatedAdminNotificationsRoute,
+  AuthenticatedAdminPpeRoute: AuthenticatedAdminPpeRoute,
+  AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+  AuthenticatedAdminRolesRoute: AuthenticatedAdminRolesRouteWithChildren,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminSitesRoute: AuthenticatedAdminSitesRouteWithChildren,
+  AuthenticatedAdminTenantsRoute: AuthenticatedAdminTenantsRoute,
+  AuthenticatedAdminTrainingRoute: AuthenticatedAdminTrainingRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminWasteRoute: AuthenticatedAdminWasteRoute,
+  AuthenticatedAdminWebhooksRoute: AuthenticatedAdminWebhooksRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedAppAuditsRouteChildren {
+  AuthenticatedAppAuditsCreateRoute: typeof AuthenticatedAppAuditsCreateRoute
+}
+
+const AuthenticatedAppAuditsRouteChildren: AuthenticatedAppAuditsRouteChildren =
+  {
+    AuthenticatedAppAuditsCreateRoute: AuthenticatedAppAuditsCreateRoute,
+  }
+
+const AuthenticatedAppAuditsRouteWithChildren =
+  AuthenticatedAppAuditsRoute._addFileChildren(
+    AuthenticatedAppAuditsRouteChildren,
+  )
+
+interface AuthenticatedAppIncidentsRouteChildren {
+  AuthenticatedAppIncidentsIdRoute: typeof AuthenticatedAppIncidentsIdRoute
+  AuthenticatedAppIncidentsCreateRoute: typeof AuthenticatedAppIncidentsCreateRoute
+}
+
+const AuthenticatedAppIncidentsRouteChildren: AuthenticatedAppIncidentsRouteChildren =
+  {
+    AuthenticatedAppIncidentsIdRoute: AuthenticatedAppIncidentsIdRoute,
+    AuthenticatedAppIncidentsCreateRoute: AuthenticatedAppIncidentsCreateRoute,
+  }
+
+const AuthenticatedAppIncidentsRouteWithChildren =
+  AuthenticatedAppIncidentsRoute._addFileChildren(
+    AuthenticatedAppIncidentsRouteChildren,
+  )
+
+interface AuthenticatedAppRouteChildren {
+  AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRoute
+  AuthenticatedAppAuditsRoute: typeof AuthenticatedAppAuditsRouteWithChildren
+  AuthenticatedAppDashboardRoute: typeof AuthenticatedAppDashboardRoute
+  AuthenticatedAppDocumentsRoute: typeof AuthenticatedAppDocumentsRoute
+  AuthenticatedAppIncidentsRoute: typeof AuthenticatedAppIncidentsRouteWithChildren
+  AuthenticatedAppInductionsRoute: typeof AuthenticatedAppInductionsRoute
+  AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
+  AuthenticatedAppPpeRoute: typeof AuthenticatedAppPpeRoute
+  AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
+  AuthenticatedAppSitesRoute: typeof AuthenticatedAppSitesRoute
+  AuthenticatedAppTrainingRoute: typeof AuthenticatedAppTrainingRoute
+  AuthenticatedAppWasteRoute: typeof AuthenticatedAppWasteRoute
+}
+
+const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
+  AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRoute,
+  AuthenticatedAppAuditsRoute: AuthenticatedAppAuditsRouteWithChildren,
+  AuthenticatedAppDashboardRoute: AuthenticatedAppDashboardRoute,
+  AuthenticatedAppDocumentsRoute: AuthenticatedAppDocumentsRoute,
+  AuthenticatedAppIncidentsRoute: AuthenticatedAppIncidentsRouteWithChildren,
+  AuthenticatedAppInductionsRoute: AuthenticatedAppInductionsRoute,
+  AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
+  AuthenticatedAppPpeRoute: AuthenticatedAppPpeRoute,
+  AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
+  AuthenticatedAppSitesRoute: AuthenticatedAppSitesRoute,
+  AuthenticatedAppTrainingRoute: AuthenticatedAppTrainingRoute,
+  AuthenticatedAppWasteRoute: AuthenticatedAppWasteRoute,
+}
+
+const AuthenticatedAppRouteWithChildren =
+  AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
 
 interface AuthenticatedAuditsRouteChildren {
   AuthenticatedAuditsCreateRoute: typeof AuthenticatedAuditsCreateRoute
@@ -1406,114 +1812,46 @@ const AuthenticatedIncidentsRouteWithChildren =
     AuthenticatedIncidentsRouteChildren,
   )
 
-// ── Admin panel children ──────────────────────────────────────────────────────
-interface AuthenticatedAdminRolesRouteChildren { AuthenticatedAdminRolesIdRoute: typeof AuthenticatedAdminRolesIdRoute }
-const AuthenticatedAdminRolesRouteChildren = { AuthenticatedAdminRolesIdRoute }
-const AuthenticatedAdminRolesRouteWithChildren = AuthenticatedAdminRolesRoute._addFileChildren(AuthenticatedAdminRolesRouteChildren)
-
-interface AuthenticatedAdminSitesRouteChildren { AuthenticatedAdminSitesIdRoute: typeof AuthenticatedAdminSitesIdRoute }
-const AuthenticatedAdminSitesRouteChildren = { AuthenticatedAdminSitesIdRoute }
-const AuthenticatedAdminSitesRouteWithChildren = AuthenticatedAdminSitesRoute._addFileChildren(AuthenticatedAdminSitesRouteChildren)
-
-interface AuthenticatedAdminCompaniesRouteChildren { AuthenticatedAdminCompaniesIdRoute: typeof AuthenticatedAdminCompaniesIdRoute }
-const AuthenticatedAdminCompaniesRouteChildren = { AuthenticatedAdminCompaniesIdRoute }
-const AuthenticatedAdminCompaniesRouteWithChildren = AuthenticatedAdminCompaniesRoute._addFileChildren(AuthenticatedAdminCompaniesRouteChildren)
-
-interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
-  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
-  AuthenticatedAdminRolesRoute: typeof AuthenticatedAdminRolesRouteWithChildren
-  AuthenticatedAdminSitesRoute: typeof AuthenticatedAdminSitesRouteWithChildren
-  AuthenticatedAdminCompaniesRoute: typeof AuthenticatedAdminCompaniesRouteWithChildren
-  AuthenticatedAdminIncidentsRoute: typeof AuthenticatedAdminIncidentsRoute
-  AuthenticatedAdminAuditsRoute: typeof AuthenticatedAdminAuditsRoute
-  AuthenticatedAdminTrainingRoute: typeof AuthenticatedAdminTrainingRoute
-  AuthenticatedAdminInductionsRoute: typeof AuthenticatedAdminInductionsRoute
-  AuthenticatedAdminPpeRoute: typeof AuthenticatedAdminPpeRoute
-  AuthenticatedAdminAssetsRoute: typeof AuthenticatedAdminAssetsRoute
-  AuthenticatedAdminWasteRoute: typeof AuthenticatedAdminWasteRoute
-  AuthenticatedAdminDocumentsRoute: typeof AuthenticatedAdminDocumentsRoute
-  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
-  AuthenticatedAdminActivityRoute: typeof AuthenticatedAdminActivityRoute
-  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
-  AuthenticatedAdminWebhooksRoute: typeof AuthenticatedAdminWebhooksRoute
-  AuthenticatedAdminNotificationsRoute: typeof AuthenticatedAdminNotificationsRoute
-  AuthenticatedAdminFeedbackRoute: typeof AuthenticatedAdminFeedbackRoute
-}
-const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminDashboardRoute, AuthenticatedAdminUsersRoute,
-  AuthenticatedAdminRolesRoute: AuthenticatedAdminRolesRouteWithChildren,
-  AuthenticatedAdminSitesRoute: AuthenticatedAdminSitesRouteWithChildren,
-  AuthenticatedAdminCompaniesRoute: AuthenticatedAdminCompaniesRouteWithChildren,
-  AuthenticatedAdminIncidentsRoute, AuthenticatedAdminAuditsRoute,
-  AuthenticatedAdminTrainingRoute, AuthenticatedAdminInductionsRoute,
-  AuthenticatedAdminPpeRoute, AuthenticatedAdminAssetsRoute,
-  AuthenticatedAdminWasteRoute, AuthenticatedAdminDocumentsRoute,
-  AuthenticatedAdminReportsRoute, AuthenticatedAdminActivityRoute,
-  AuthenticatedAdminSettingsRoute, AuthenticatedAdminWebhooksRoute,
-  AuthenticatedAdminNotificationsRoute, AuthenticatedAdminFeedbackRoute,
-}
-const AuthenticatedAdminRouteWithChildren = AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
-
-// ── App panel children ────────────────────────────────────────────────────────
-interface AuthenticatedAppIncidentsRouteChildren {
-  AuthenticatedAppIncidentsIdRoute: typeof AuthenticatedAppIncidentsIdRoute
-  AuthenticatedAppIncidentsCreateRoute: typeof AuthenticatedAppIncidentsCreateRoute
-}
-const AuthenticatedAppIncidentsRouteChildren = { AuthenticatedAppIncidentsIdRoute, AuthenticatedAppIncidentsCreateRoute }
-const AuthenticatedAppIncidentsRouteWithChildren = AuthenticatedAppIncidentsRoute._addFileChildren(AuthenticatedAppIncidentsRouteChildren)
-
-interface AuthenticatedAppAuditsRouteChildren { AuthenticatedAppAuditsCreateRoute: typeof AuthenticatedAppAuditsCreateRoute }
-const AuthenticatedAppAuditsRouteChildren = { AuthenticatedAppAuditsCreateRoute }
-const AuthenticatedAppAuditsRouteWithChildren = AuthenticatedAppAuditsRoute._addFileChildren(AuthenticatedAppAuditsRouteChildren)
-
-interface AuthenticatedAppRouteChildren {
-  AuthenticatedAppDashboardRoute: typeof AuthenticatedAppDashboardRoute
-  AuthenticatedAppIncidentsRoute: typeof AuthenticatedAppIncidentsRouteWithChildren
-  AuthenticatedAppAuditsRoute: typeof AuthenticatedAppAuditsRouteWithChildren
-  AuthenticatedAppTrainingRoute: typeof AuthenticatedAppTrainingRoute
-  AuthenticatedAppInductionsRoute: typeof AuthenticatedAppInductionsRoute
-  AuthenticatedAppPpeRoute: typeof AuthenticatedAppPpeRoute
-  AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRoute
-  AuthenticatedAppWasteRoute: typeof AuthenticatedAppWasteRoute
-  AuthenticatedAppDocumentsRoute: typeof AuthenticatedAppDocumentsRoute
-  AuthenticatedAppSitesRoute: typeof AuthenticatedAppSitesRoute
-  AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
-  AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
-}
-const AuthenticatedAppRouteChildren: AuthenticatedAppRouteChildren = {
-  AuthenticatedAppDashboardRoute,
-  AuthenticatedAppIncidentsRoute: AuthenticatedAppIncidentsRouteWithChildren,
-  AuthenticatedAppAuditsRoute: AuthenticatedAppAuditsRouteWithChildren,
-  AuthenticatedAppTrainingRoute, AuthenticatedAppInductionsRoute,
-  AuthenticatedAppPpeRoute, AuthenticatedAppAssetsRoute,
-  AuthenticatedAppWasteRoute, AuthenticatedAppDocumentsRoute,
-  AuthenticatedAppSitesRoute, AuthenticatedAppReportsRoute,
-  AuthenticatedAppNotificationsRoute,
-}
-const AuthenticatedAppRouteWithChildren = AuthenticatedAppRoute._addFileChildren(AuthenticatedAppRouteChildren)
-
-// ── Portal children ───────────────────────────────────────────────────────────
 interface AuthenticatedPortalRouteChildren {
-  AuthenticatedPortalDashboardRoute: typeof AuthenticatedPortalDashboardRoute
-  AuthenticatedPortalSitesRoute: typeof AuthenticatedPortalSitesRoute
-  AuthenticatedPortalIncidentsRoute: typeof AuthenticatedPortalIncidentsRoute
   AuthenticatedPortalAuditsRoute: typeof AuthenticatedPortalAuditsRoute
+  AuthenticatedPortalDashboardRoute: typeof AuthenticatedPortalDashboardRoute
   AuthenticatedPortalDocumentsRoute: typeof AuthenticatedPortalDocumentsRoute
-  AuthenticatedPortalReportsRoute: typeof AuthenticatedPortalReportsRoute
   AuthenticatedPortalFeedbackRoute: typeof AuthenticatedPortalFeedbackRoute
+  AuthenticatedPortalIncidentsRoute: typeof AuthenticatedPortalIncidentsRoute
   AuthenticatedPortalNotificationsRoute: typeof AuthenticatedPortalNotificationsRoute
+  AuthenticatedPortalReportsRoute: typeof AuthenticatedPortalReportsRoute
+  AuthenticatedPortalSitesRoute: typeof AuthenticatedPortalSitesRoute
 }
+
 const AuthenticatedPortalRouteChildren: AuthenticatedPortalRouteChildren = {
-  AuthenticatedPortalDashboardRoute, AuthenticatedPortalSitesRoute,
-  AuthenticatedPortalIncidentsRoute, AuthenticatedPortalAuditsRoute,
-  AuthenticatedPortalDocumentsRoute, AuthenticatedPortalReportsRoute,
-  AuthenticatedPortalFeedbackRoute, AuthenticatedPortalNotificationsRoute,
+  AuthenticatedPortalAuditsRoute: AuthenticatedPortalAuditsRoute,
+  AuthenticatedPortalDashboardRoute: AuthenticatedPortalDashboardRoute,
+  AuthenticatedPortalDocumentsRoute: AuthenticatedPortalDocumentsRoute,
+  AuthenticatedPortalFeedbackRoute: AuthenticatedPortalFeedbackRoute,
+  AuthenticatedPortalIncidentsRoute: AuthenticatedPortalIncidentsRoute,
+  AuthenticatedPortalNotificationsRoute: AuthenticatedPortalNotificationsRoute,
+  AuthenticatedPortalReportsRoute: AuthenticatedPortalReportsRoute,
+  AuthenticatedPortalSitesRoute: AuthenticatedPortalSitesRoute,
 }
-const AuthenticatedPortalRouteWithChildren = AuthenticatedPortalRoute._addFileChildren(AuthenticatedPortalRouteChildren)
+
+const AuthenticatedPortalRouteWithChildren =
+  AuthenticatedPortalRoute._addFileChildren(AuthenticatedPortalRouteChildren)
+
+interface AuthenticatedRolesRouteChildren {
+  AuthenticatedRolesIdRoute: typeof AuthenticatedRolesIdRoute
+}
+
+const AuthenticatedRolesRouteChildren: AuthenticatedRolesRouteChildren = {
+  AuthenticatedRolesIdRoute: AuthenticatedRolesIdRoute,
+}
+
+const AuthenticatedRolesRouteWithChildren =
+  AuthenticatedRolesRoute._addFileChildren(AuthenticatedRolesRouteChildren)
 
 interface AuthenticatedRouteChildren {
   AuthenticatedActivityRoute: typeof AuthenticatedActivityRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
   AuthenticatedAssetsRoute: typeof AuthenticatedAssetsRoute
   AuthenticatedAuditsRoute: typeof AuthenticatedAuditsRouteWithChildren
   AuthenticatedCompaniesRoute: typeof AuthenticatedCompaniesRouteWithChildren
@@ -1523,6 +1861,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIncidentsRoute: typeof AuthenticatedIncidentsRouteWithChildren
   AuthenticatedInductionsRoute: typeof AuthenticatedInductionsRoute
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedPortalRoute: typeof AuthenticatedPortalRouteWithChildren
   AuthenticatedPpeRoute: typeof AuthenticatedPpeRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedRolesRoute: typeof AuthenticatedRolesRouteWithChildren
@@ -1531,13 +1870,12 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsersRoute: typeof AuthenticatedUsersRoute
   AuthenticatedWasteRoute: typeof AuthenticatedWasteRoute
   AuthenticatedWebhooksRoute: typeof AuthenticatedWebhooksRoute
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedAppRoute: typeof AuthenticatedAppRouteWithChildren
-  AuthenticatedPortalRoute: typeof AuthenticatedPortalRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedActivityRoute: AuthenticatedActivityRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
   AuthenticatedAssetsRoute: AuthenticatedAssetsRoute,
   AuthenticatedAuditsRoute: AuthenticatedAuditsRouteWithChildren,
   AuthenticatedCompaniesRoute: AuthenticatedCompaniesRouteWithChildren,
@@ -1547,6 +1885,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIncidentsRoute: AuthenticatedIncidentsRouteWithChildren,
   AuthenticatedInductionsRoute: AuthenticatedInductionsRoute,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedPortalRoute: AuthenticatedPortalRouteWithChildren,
   AuthenticatedPpeRoute: AuthenticatedPpeRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedRolesRoute: AuthenticatedRolesRouteWithChildren,
@@ -1555,9 +1894,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsersRoute: AuthenticatedUsersRoute,
   AuthenticatedWasteRoute: AuthenticatedWasteRoute,
   AuthenticatedWebhooksRoute: AuthenticatedWebhooksRoute,
-  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedAppRoute: AuthenticatedAppRouteWithChildren,
-  AuthenticatedPortalRoute: AuthenticatedPortalRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -1567,7 +1903,9 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

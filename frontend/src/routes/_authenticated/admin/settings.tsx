@@ -11,7 +11,7 @@ import { DangerZone } from "@/components/settings/DangerZone";
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({
     meta: [
-      { title: "Settings Â· 360CRD" },
+      { title: "Settings · 360CRD" },
       { name: "description", content: "Workspace, security and notification preferences." },
     ],
   }),

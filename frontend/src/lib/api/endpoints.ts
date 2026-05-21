@@ -38,6 +38,16 @@ export const ENDPOINTS = {
     sites:        (id: string) => `/users/${id}/sites`,
   },
 
+  tenants: {
+    list:   "/tenants",
+    detail: (id: string) => `/tenants/${id}`,
+    create: "/tenants",
+    update: (id: string) => `/tenants/${id}`,
+    remove: (id: string) => `/tenants/${id}`,
+    status: (id: string) => `/tenants/${id}/status`,
+    stats:  (id: string) => `/tenants/${id}/stats`,
+  },
+
   customers: {
     list:   "/customers",
     detail: (id: string) => `/customers/${id}`,

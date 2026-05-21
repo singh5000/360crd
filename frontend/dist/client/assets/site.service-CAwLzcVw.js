@@ -1,0 +1,1 @@
+import{s as e,E as s}from"./index-Dxszieto.js";const a=t=>t.data,o={list:t=>e.get(s.sites.list,t),get:t=>e.get(s.sites.detail(t)).then(a),create:t=>e.post(s.sites.create,t).then(a),update:(t,i)=>e.patch(s.sites.update(t),i).then(a),remove:t=>e.delete(s.sites.remove(t)),stats:()=>e.get(s.sites.stats).then(a)};export{o as s};

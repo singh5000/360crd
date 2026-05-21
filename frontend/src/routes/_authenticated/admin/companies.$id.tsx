@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/admin/companies/$id")({
   head: () => ({
     meta: [
-      { title: "Customer Detail Â· 360CRD" },
+      { title: "Customer Detail · 360CRD" },
       { name: "description", content: "Customer details and contracted sites." },
     ],
   }),

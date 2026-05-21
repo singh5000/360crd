@@ -9,7 +9,7 @@ import { SurfaceCard } from "@/components/shared/Card";
 import { ModuleDrawer } from "@/components/shared/ModuleDrawer";
 import { FilterBar, type FilterConfig } from "@/components/shared/FilterBar";
 import { useIncidentStore } from "@/lib/stores/incident.store";
-import { usePermissions } from "@/lib/auth-store";
+import { usePermissions, useAuth } from "@/lib/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,14 +24,14 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/_authenticated/admin/incidents")({
   head: () => ({
     meta: [
-      { title: "Incidents Â· 360CRD" },
+      { title: "Incidents · 360CRD" },
       { name: "description", content: "Track, triage and resolve incidents." },
     ],
   }),
   component: IncidentsPage,
 });
 
-// â”€â”€ Colour maps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Colour maps â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 const STATUS_COLOR: Record<string, string> = {
   OPEN:          "bg-red-500/10 text-red-600 border-red-500/20",
   REPORTED:      "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
@@ -56,7 +56,7 @@ const PRIORITY_COLOR: Record<string, string> = {
   CRITICAL: "text-red-600",
 };
 
-// â”€â”€ Filter config â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Filter config â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 const FILTER_CONFIGS: FilterConfig[] = [
   {
     key: "status",
@@ -100,7 +100,7 @@ const INCIDENT_TYPES = ["SAFETY", "ENVIRONMENTAL", "QUALITY", "SECURITY", "NEAR_
 const SEVERITIES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 
-// â”€â”€ Create Drawer Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Create Drawer Form â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 function CreateIncidentForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
   const { createIncident } = useIncidentStore();
   const [submitting, setSubmitting] = useState(false);
@@ -250,7 +250,7 @@ function CreateIncidentForm({ onSuccess, onCancel }: { onSuccess: () => void; on
   );
 }
 
-// â”€â”€ Stats bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Stats bar â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 function StatPill({
   label, value, icon: Icon, color,
 }: {
@@ -271,10 +271,12 @@ function StatPill({
   );
 }
 
-// â”€â”€ Main page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â"€â"€ Main page â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€
 function IncidentsPage() {
   const { incidents, loading, initialized, fetchIncidents } = useIncidentStore();
   const can = usePermissions();
+  const { user } = useAuth();
+  const isSuperAdmin = user?.role === "super_admin";
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
@@ -327,7 +329,7 @@ function IncidentsPage() {
             <Button variant="outline" size="sm" onClick={() => fetchIncidents()} disabled={loading}>
               <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             </Button>
-            {can("incident:create") && (
+            {can("incident:create") && !isSuperAdmin && (
               <Button
                 size="sm"
                 onClick={() => setDrawerOpen(true)}
@@ -378,7 +380,7 @@ function IncidentsPage() {
                 ? "Report the first incident to get started."
                 : "Try adjusting your search or filter criteria."}
             </p>
-            {incidents.length === 0 && can("incident:create") && (
+            {incidents.length === 0 && can("incident:create") && !isSuperAdmin && (
               <Button
                 size="sm"
                 className="mt-4 gap-2 [background:var(--gradient-primary)] text-primary-foreground"
@@ -466,14 +468,14 @@ function IncidentsPage() {
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <span className="text-xs text-foreground/80">
-                        {inc.site?.name ?? <span className="text-muted-foreground/50">â€”</span>}
+                        {inc.site?.name ?? <span className="text-muted-foreground/50">—</span>}
                       </span>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
                       <span className="text-xs text-foreground/80">
                         {inc.reportedBy
                           ? `${inc.reportedBy.firstName} ${inc.reportedBy.lastName}`
-                          : <span className="text-muted-foreground/50">â€”</span>}
+                          : <span className="text-muted-foreground/50">—</span>}
                       </span>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell">
@@ -500,7 +502,7 @@ function IncidentsPage() {
 
       {/* Create drawer */}
       <ModuleDrawer
-        open={drawerOpen && can("incident:create")}
+        open={drawerOpen && can("incident:create") && !isSuperAdmin}
         onOpenChange={setDrawerOpen}
         title="Report Incident"
         description="Document what happened, classify severity, and notify the team."

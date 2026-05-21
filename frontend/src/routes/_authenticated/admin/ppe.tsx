@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { usePermissions } from "@/lib/auth-store";
 
 export const Route = createFileRoute("/_authenticated/admin/ppe")({
-  head: () => ({ meta: [{ title: "PPE Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "PPE · 360CRD" }] }),
   component: PPEPage,
 });
 
@@ -68,7 +68,7 @@ const FILTER_CONFIGS = [
   },
 ];
 
-const EMPTY_FORM = { name: "", category: "HEAD", brand: "", model: "", serialNumber: "" };
+const EMPTY_FORM = { name: "", category: "HEAD", manufacturer: "", model: "", serialNumber: "" };
 
 function PPEPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -123,7 +123,7 @@ function PPEPage() {
       await apiClient.post(ENDPOINTS.ppe.create, {
         name: form.name,
         category: form.category,
-        brand: form.brand || undefined,
+        manufacturer: form.manufacturer || undefined,
         model: form.model || undefined,
         serialNumber: form.serialNumber || undefined,
       });
@@ -175,7 +175,7 @@ function PPEPage() {
         <FilterBar
           search={search}
           onSearchChange={setSearch}
-          searchPlaceholder="Search PPE itemsâ€¦"
+          searchPlaceholder="Search PPE items..."
           filters={FILTER_CONFIGS}
           values={filterVals}
           onFilterChange={(key, val) => setFilterVals((prev) => ({ ...prev, [key]: val }))}
@@ -229,13 +229,13 @@ function PPEPage() {
                         <span className={cn("text-xs font-medium", CONDITION_COLOR[item.condition] ?? "text-muted-foreground")}>
                           {item.condition}
                         </span>
-                      ) : "â€”"}
+                      ) : "—"}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                      {[item.brand, item.model].filter(Boolean).join(" ") || "â€”"}
+                      {[item.manufacturer, item.model].filter(Boolean).join(" ") || "—"}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell font-mono text-xs text-muted-foreground">
-                      {item.serialNumber ?? "â€”"}
+                      {item.serialNumber ?? "—"}
                     </TableCell>
                     <TableCell className="text-right pr-3">
                       <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
@@ -263,7 +263,7 @@ function PPEPage() {
               disabled={submitting || !form.name}
               className="[background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
             >
-              {submitting ? "Addingâ€¦" : "Add Item"}
+              {submitting ? "Adding..." : "Add Item"}
             </Button>
           </div>
         }
@@ -273,7 +273,7 @@ function PPEPage() {
             <Label htmlFor="ppe-name">Name <span className="text-red-500">*</span></Label>
             <Input
               id="ppe-name"
-              placeholder="e.g. Safety Helmet â€” Class E"
+              placeholder="e.g. Safety Helmet - Class E"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               required
@@ -292,8 +292,8 @@ function PPEPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="ppe-brand">Brand</Label>
-              <Input id="ppe-brand" placeholder="3M" value={form.brand} onChange={(e) => setForm((f) => ({ ...f, brand: e.target.value }))} />
+              <Label htmlFor="ppe-manufacturer">Manufacturer</Label>
+              <Input id="ppe-manufacturer" placeholder="3M" value={form.manufacturer} onChange={(e) => setForm((f) => ({ ...f, manufacturer: e.target.value }))} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="ppe-model">Model</Label>

@@ -16,7 +16,7 @@ import { usePermissions } from "@/lib/auth-store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/roles/$id")({
-  head: () => ({ meta: [{ title: "Role Detail Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "Role Detail · 360CRD" }] }),
   component: RoleDetailPage,
 });
 
@@ -235,14 +235,14 @@ function RoleDetailPage() {
           ))}
           {isSystem && (
             <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2">
-              <span className="text-xs text-amber-600">System role â€” permissions are read-only</span>
+              <span className="text-xs text-amber-600">System role — permissions are read-only</span>
             </div>
           )}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
 
-          {/* Permission Matrix â€” takes 2/3 */}
+          {/* Permission Matrix — takes 2/3 */}
           <div className="lg:col-span-2">
             <div className="rounded-xl border border-border/60 bg-card/50 overflow-hidden">
               <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
@@ -287,7 +287,7 @@ function RoleDetailPage() {
                           {ACTION_ORDER.map((action) => {
                             const perm = permByAction[action];
                             if (!perm) {
-                              return <td key={action} className="px-2 py-2.5 text-center"><span className="text-muted-foreground/20 text-xs">â€”</span></td>;
+                              return <td key={action} className="px-2 py-2.5 text-center"><span className="text-muted-foreground/20 text-xs">—</span></td>;
                             }
                             const enabled = enabledIds.has(perm.id);
                             return (
@@ -321,7 +321,7 @@ function RoleDetailPage() {
             </div>
           </div>
 
-          {/* Users assigned â€” takes 1/3 */}
+          {/* Users assigned — takes 1/3 */}
           <div className="space-y-4">
             <div className="rounded-xl border border-border/60 bg-card/50 overflow-hidden">
               <div className="border-b border-border/60 px-4 py-3">

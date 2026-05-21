@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { usePermissions } from "@/lib/auth-store";
 
 export const Route = createFileRoute("/_authenticated/app/ppe")({
-  head: () => ({ meta: [{ title: "PPE Â· 360CRD" }] }),
+  head: () => ({ meta: [{ title: "PPE · 360CRD" }] }),
   component: PPEPage,
 });
 
@@ -229,13 +229,13 @@ function PPEPage() {
                         <span className={cn("text-xs font-medium", CONDITION_COLOR[item.condition] ?? "text-muted-foreground")}>
                           {item.condition}
                         </span>
-                      ) : "â€”"}
+                      ) : "—"}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                      {[item.brand, item.model].filter(Boolean).join(" ") || "â€”"}
+                      {[item.brand, item.model].filter(Boolean).join(" ") || "—"}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell font-mono text-xs text-muted-foreground">
-                      {item.serialNumber ?? "â€”"}
+                      {item.serialNumber ?? "—"}
                     </TableCell>
                     <TableCell className="text-right pr-3">
                       <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
@@ -273,7 +273,7 @@ function PPEPage() {
             <Label htmlFor="ppe-name">Name <span className="text-red-500">*</span></Label>
             <Input
               id="ppe-name"
-              placeholder="e.g. Safety Helmet â€” Class E"
+              placeholder="e.g. Safety Helmet — Class E"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               required
