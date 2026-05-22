@@ -13,6 +13,7 @@ export type AuthUser = {
   email: string;
   role: string;
   tenantId: string;
+  customerId: string | null;
   permissions: string[];
 };
 
@@ -57,6 +58,7 @@ function mapUser(data: LoginResponse["user"]): AuthUser {
     role: data.roles?.[0] ?? data.type ?? "staff",
     tenantId: data.tenantId,
     permissions: data.permissions ?? [],
+    customerId: (data as any).customerId ?? null,
   };
 }
 
