@@ -113,6 +113,7 @@ export const adminNavGroups: NavGroup[] = [
     items: [
       { label: "Users", to: "/admin/users", icon: Users, permission: "user:read" },
       { label: "Sites", to: "/admin/sites", icon: Warehouse, permission: "site:read" },
+      { label: "Customers", to: "/admin/companies", icon: Building2, permission: "customer:read" },
       { label: "Roles", to: "/admin/roles", icon: ShieldCheck, permission: "role:read", role: "super_admin" },
     ],
   },

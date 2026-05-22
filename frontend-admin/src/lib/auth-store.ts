@@ -116,7 +116,7 @@ export function useAuth() {
   return useSyncExternalStore(
     authStore.subscribe,
     authStore.getState,
-    () => ({ isAuthenticated: false, user: null }) as AuthState,
+    authStore.getState,
   );
 }
 

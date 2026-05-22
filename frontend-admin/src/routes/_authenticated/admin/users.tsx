@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Plus, RefreshCw, Users, UserCheck, UserX, ChevronRight,
-  ToggleLeft, ToggleRight, ShieldCheck,
+  ToggleLeft, ToggleRight, ShieldCheck, Eye,
 } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { userService, type User } from "@/lib/api/services/user.service";
@@ -25,6 +25,7 @@ import { ModuleDrawer } from "@/components/shared/ModuleDrawer";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAuth, usePermissions } from "@/lib/auth-store";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   head: () => ({ meta: [{ title: "Users · 360CRD" }] }),
@@ -82,6 +83,7 @@ function UsersPage() {
   const { user: me } = useAuth();
   const can = usePermissions();
   const isSuperAdmin = me?.role === "super_admin";
+  const navigate = useNavigate();
 
   const [users, setUsers]       = useState<User[]>([]);
   const [roles, setRoles]       = useState<any[]>([]);
@@ -302,6 +304,15 @@ function UsersPage() {
                     </TableCell>
                     <TableCell className="text-right pr-3">
                       <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 text-[10px] text-muted-foreground hover:text-foreground"
+                          onClick={() => navigate({ to: "/admin/users/$id", params: { id: user.id } })}
+                          title="View details"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                        </Button>
                         {user.status === "INVITED" && can("user:update") && (
                           <>
                             <Button
