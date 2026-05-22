@@ -1,0 +1,1 @@
+import{s as t,E as s}from"./index-Dxszieto.js";const r=e=>e.data,c={list:e=>t.get(s.customers.list,e),get:e=>t.get(s.customers.detail(e)).then(r),create:e=>t.post(s.customers.create,e).then(r),update:(e,o)=>t.patch(s.customers.update(e),o).then(r),remove:e=>t.delete(s.customers.remove(e))};export{c};
