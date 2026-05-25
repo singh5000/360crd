@@ -23,7 +23,9 @@ export default async function incidentRoutes(fastify: FastifyInstance) {
     let siteIds: string[] | undefined;
     if (!r.isSuperAdmin && ["MANAGER", "STAFF"].includes(r.userType)) {
       const userSites = await userRepo.getUserSites(r.userId);
-      siteIds = userSites.map((s: any) => s.siteId);
+      if (userSites.length > 0) {
+        siteIds = userSites.map((s: any) => s.siteId);
+      }
     }
 
     const stats = await svc.getStats(r.tenantId, dateFrom, dateTo, siteIds);
@@ -45,7 +47,9 @@ export default async function incidentRoutes(fastify: FastifyInstance) {
     let restrictToSiteIds: string[] | undefined;
     if (!r.isSuperAdmin && ["MANAGER", "STAFF"].includes(r.userType)) {
       const userSites = await userRepo.getUserSites(r.userId);
-      restrictToSiteIds = userSites.map((s: any) => s.siteId);
+      if (userSites.length > 0) {
+        restrictToSiteIds = userSites.map((s: any) => s.siteId);
+      }
     }
 
     const result = await svc.findMany(r.tenantId, query.data, restrictToSiteIds);

@@ -26,7 +26,9 @@ export default async function siteRoutes(fastify: FastifyInstance) {
     let restrictToSiteIds: string[] | undefined;
     if (!r.isSuperAdmin && ["MANAGER", "STAFF"].includes(r.userType)) {
       const userSites = await userRepo.getUserSites(r.userId);
-      restrictToSiteIds = userSites.map((s: any) => s.siteId);
+      if (userSites.length > 0) {
+        restrictToSiteIds = userSites.map((s: any) => s.siteId);
+      }
     }
 
     const result = await repo.findMany(r.tenantId, query.data, restrictToSiteIds);

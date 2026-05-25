@@ -48,7 +48,7 @@ export class SiteRepository {
     const where: any = {
       tenantId,
       deletedAt: null,
-      ...(restrictToSiteIds && { id: { in: restrictToSiteIds } }),
+      ...(restrictToSiteIds?.length && { id: { in: restrictToSiteIds } }),
       ...(query.status && { status: query.status }),
       ...(query.type && { type: query.type }),
       ...(query.customerId && { customerId: query.customerId }),

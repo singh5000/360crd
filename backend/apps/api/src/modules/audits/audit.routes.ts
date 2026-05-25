@@ -173,13 +173,21 @@ export default async function auditRoutes(fastify: FastifyInstance) {
       }),
     };
 
-    // Staff only see assigned audits
-    if (r.userType === "STAFF") where.assignedToId = r.userId;
+    const hasManagerRole = r.roles?.includes("manager") || r.roles?.includes("tenant_admin");
+    const effectivelyManager = r.userType === "MANAGER" || hasManagerRole;
+    const effectivelyStaff = r.userType === "STAFF" && !hasManagerRole;
 
-    // Manager sees only their site audits
-    if (r.userType === "MANAGER") {
+    // Staff only see assigned audits
+    if (!r.isSuperAdmin && effectivelyStaff) {
+      where.OR = [{ assignedToId: r.userId }];
+    }
+
+    // Manager sees only their site audits — but if no sites assigned, show all tenant audits
+    if (!r.isSuperAdmin && effectivelyManager) {
       const userSites = await userRepo.getUserSites(r.userId);
-      where.siteId = { in: userSites.map((s: any) => s.siteId) };
+      if (userSites.length > 0) {
+        where.siteId = { in: userSites.map((s: any) => s.siteId) };
+      }
     }
 
     const skip = (query.data.page - 1) * query.data.limit;
@@ -214,6 +222,13 @@ export default async function auditRoutes(fastify: FastifyInstance) {
     const r = req as any;
     const effectiveTenantId = body.data.tenantId ?? r.tenantId;
     if (!effectiveTenantId) throw new ValidationError("tenantId is required", []);
+
+    // Auto-assign to STAFF user (not manager) when they create an audit without specifying assignedToId
+    const hasManagerRoleCreate = r.roles?.includes("manager") || r.roles?.includes("tenant_admin");
+    if (r.userType === "STAFF" && !hasManagerRoleCreate && !body.data.assignedToId) {
+      (body.data as any).assignedToId = r.userId;
+    }
+
     const refNumber = await svc.generateRefNumber(effectiveTenantId);
 
     const { tenantId: _t, ...auditData } = body.data;
@@ -246,10 +261,16 @@ export default async function auditRoutes(fastify: FastifyInstance) {
     const now = new Date();
 
     const baseWhere: any = { deletedAt: null };
-    if (r.userType === "STAFF") baseWhere.assignedToId = r.userId;
-    if (r.userType === "MANAGER") {
+    const hasManagerRoleStats = r.roles?.includes("manager") || r.roles?.includes("tenant_admin");
+    const effectivelyManagerStats = r.userType === "MANAGER" || hasManagerRoleStats;
+    const effectivelyStaffStats = r.userType === "STAFF" && !hasManagerRoleStats;
+
+    if (!r.isSuperAdmin && effectivelyStaffStats) baseWhere.OR = [{ assignedToId: r.userId }];
+    if (!r.isSuperAdmin && effectivelyManagerStats) {
       const userSites = await userRepo.getUserSites(r.userId);
-      baseWhere.siteId = { in: userSites.map((s: any) => s.siteId) };
+      if (userSites.length > 0) {
+        baseWhere.siteId = { in: userSites.map((s: any) => s.siteId) };
+      }
     }
 
     const [total, completed, overdue, byStatusRaw, byTypeRaw, avgAgg] = await Promise.all([

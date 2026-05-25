@@ -323,7 +323,7 @@ async function main() {
 
   const demoManager = await prisma.user.upsert({
     where: { tenantId_email: { tenantId: demoTenant.id, email: demoManagerEmail } },
-    update: {},
+    update: { type: UserType.MANAGER },
     create: {
       tenantId: demoTenant.id,
       email: demoManagerEmail,
@@ -332,7 +332,7 @@ async function main() {
       passwordHash: demoManagerHash,
       firstName: "Demo",
       lastName: "Manager",
-      type: UserType.STAFF,
+      type: UserType.MANAGER,
       mustChangePassword: false,
     },
   });

@@ -48,9 +48,12 @@ export default async function userRoutes(fastify: FastifyInstance) {
     // Managers only see users on their assigned sites
     if (!r.isSuperAdmin && r.userType === "MANAGER") {
       const managerSites = await repo.getUserSites(r.userId);
-      const siteIds = managerSites.map((s: any) => s.siteId);
-      const result = await repo.getUsersOnSites(r.tenantId, siteIds, query.data);
-      return reply.send({ success: true, ...result });
+      if (managerSites.length > 0) {
+        const siteIds = managerSites.map((s: any) => s.siteId);
+        const result = await repo.getUsersOnSites(r.tenantId, siteIds, query.data);
+        return reply.send({ success: true, ...result });
+      }
+      // No sites assigned — fall through to show all tenant users
     }
 
     const result = await repo.findMany(r.tenantId, query.data);

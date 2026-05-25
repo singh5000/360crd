@@ -53,7 +53,7 @@ export class IncidentRepository {
     const where: any = {
       tenantId,
       deletedAt: null,
-      ...(restrictToSiteIds && { siteId: { in: restrictToSiteIds } }),
+      ...(restrictToSiteIds?.length && { siteId: { in: restrictToSiteIds } }),
       ...(query.status && { status: query.status }),
       ...(query.severity && { severity: query.severity }),
       ...(query.type && { type: query.type }),
