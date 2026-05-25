@@ -1,7 +1,8 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, RefreshCw, FileText, ChevronRight, FolderOpen } from "lucide-react";
+import { Plus, RefreshCw, FileText, ChevronRight, FolderOpen, Upload } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
+import { http } from "@/lib/api/axios";
 import { apiClient } from "@/lib/api/api-client";
 import { ENDPOINTS } from "@/lib/api/endpoints";
 import { Button } from "@/components/ui/button";
@@ -45,7 +46,6 @@ const FILTER_CONFIGS = [
       { value: "DRAFT", label: "Draft" },
       { value: "PUBLISHED", label: "Published" },
       { value: "ARCHIVED", label: "Archived" },
-      { value: "EXPIRED", label: "Expired" },
     ],
   },
   {
@@ -65,7 +65,9 @@ function DocumentsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const can = usePermissions();
   const [form, setForm] = useState(EMPTY_FORM);
+  const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function load() {
     setLoading(true);
@@ -73,7 +75,7 @@ function DocumentsPage() {
       const res = await apiClient.get<any>(ENDPOINTS.documents.list, { limit: 100 });
       setItems(res.data ?? []);
     } catch {
-      // silently handle
+      toast.error("Failed to load documents");
     } finally {
       setLoading(false);
     }
@@ -96,21 +98,32 @@ function DocumentsPage() {
     { label: "Published", value: items.filter((d) => d.status === "PUBLISHED").length, icon: FolderOpen, color: "text-green-500" },
   ];
 
+  function resetDrawer() {
+    setForm(EMPTY_FORM);
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!file) { toast.error("Please select a file to upload"); return; }
     setSubmitting(true);
     try {
-      await apiClient.post(ENDPOINTS.documents.create, {
-        title: form.title,
-        category: form.category,
-        description: form.description || undefined,
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("title", form.title || file.name);
+      fd.append("category", form.category);
+      if (form.description) fd.append("description", form.description);
+
+      await http.post(ENDPOINTS.documents.upload, fd, {
+        headers: { "Content-Type": undefined as any },
       });
-      toast.success("Document created");
+      toast.success("Document uploaded");
       setDrawerOpen(false);
-      setForm(EMPTY_FORM);
+      resetDrawer();
       load();
     } catch {
-      toast.error("Failed to create document");
+      toast.error("Failed to upload document");
     } finally {
       setSubmitting(false);
     }
@@ -122,7 +135,7 @@ function DocumentsPage() {
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">Documents</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Central repository for compliance and safety documents.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Compliance and safety document library.</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={load} disabled={loading}>
@@ -134,7 +147,7 @@ function DocumentsPage() {
                 className="gap-2 [background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
                 onClick={() => setDrawerOpen(true)}
               >
-                <Plus className="h-4 w-4" /> New Document
+                <Plus className="h-4 w-4" /> Upload Document
               </Button>
             )}
           </div>
@@ -171,7 +184,7 @@ function DocumentsPage() {
             <p className="mt-1 text-xs text-muted-foreground">
               {search || Object.values(filterVals).some((v) => v && v !== "ALL")
                 ? "Try adjusting filters"
-                : "Upload your first document to get started"}
+                : "No documents available yet"}
             </p>
           </div>
         ) : (
@@ -183,13 +196,13 @@ function DocumentsPage() {
                   <TableHead className="text-xs">Status</TableHead>
                   <TableHead className="hidden md:table-cell text-xs">Category</TableHead>
                   <TableHead className="hidden sm:table-cell text-xs">Version</TableHead>
-                  <TableHead className="hidden sm:table-cell text-xs">Created</TableHead>
+                  <TableHead className="hidden sm:table-cell text-xs">Uploaded</TableHead>
                   <TableHead className="w-8" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((item: any) => (
-                  <TableRow key={item.id} className="border-border/60 cursor-pointer hover:bg-muted/30">
+                  <TableRow key={item.id} className="border-border/60 hover:bg-muted/30">
                     <TableCell className="font-medium">{item.title}</TableCell>
                     <TableCell>
                       <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", STATUS_COLOR[item.status] ?? "bg-gray-500/10 text-gray-600")}>
@@ -220,40 +233,66 @@ function DocumentsPage() {
 
       <ModuleDrawer
         open={drawerOpen && can("document:create")}
-        onOpenChange={setDrawerOpen}
-        title="New Document"
-        description="Add a document to the repository"
+        onOpenChange={(open) => { setDrawerOpen(open); if (!open) resetDrawer(); }}
+        title="Upload Document"
+        description="Upload a file to the document library"
         size="md"
         footer={
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setDrawerOpen(false)}>Cancel</Button>
             <Button
-              form="create-doc-form"
+              form="upload-doc-form-app"
               type="submit"
-              disabled={submitting || !form.title}
+              disabled={submitting || !file}
               className="[background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
             >
-              {submitting ? "Creating..." : "Create Document"}
+              {submitting ? "Uploading..." : "Upload Document"}
             </Button>
           </div>
         }
       >
-        <form id="create-doc-form" onSubmit={handleSubmit} className="space-y-5">
+        <form id="upload-doc-form-app" onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="doc-title">Title <span className="text-red-500">*</span></Label>
-            <Input
-              id="doc-title"
-              placeholder="e.g. Work Health & Safety Policy"
-              value={form.title}
-              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              required
+            <Label htmlFor="app-doc-file">File <span className="text-red-500">*</span></Label>
+            <div
+              className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border/60 bg-muted/20 px-4 py-6 text-center transition-colors hover:border-primary/40 hover:bg-muted/40"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="h-8 w-8 text-muted-foreground/50" />
+              {file ? (
+                <p className="mt-2 text-sm font-medium text-foreground">{file.name}</p>
+              ) : (
+                <p className="mt-2 text-sm text-muted-foreground">Click to select a file</p>
+              )}
+              <p className="mt-1 text-xs text-muted-foreground/70">PDF, Word, Excel, Images — up to 50 MB</p>
+            </div>
+            <input
+              ref={fileInputRef}
+              id="app-doc-file"
+              type="file"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0] ?? null;
+                setFile(f);
+                if (f && !form.title) setForm((prev) => ({ ...prev, title: f.name.replace(/\.[^/.]+$/, "") }));
+              }}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="doc-category">Category</Label>
+            <Label htmlFor="app-doc-title">Title</Label>
+            <Input
+              id="app-doc-title"
+              placeholder="e.g. Work Health & Safety Policy"
+              value={form.title}
+              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="app-doc-category">Category</Label>
             <Select value={form.category} onValueChange={(v) => setForm((f) => ({ ...f, category: v }))}>
-              <SelectTrigger id="doc-category"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="app-doc-category"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {DOC_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
@@ -261,10 +300,10 @@ function DocumentsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="doc-desc">Description</Label>
+            <Label htmlFor="app-doc-desc">Description</Label>
             <Textarea
-              id="doc-desc"
-              placeholder="Brief description of this document..."
+              id="app-doc-desc"
+              placeholder="Brief description..."
               rows={3}
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
@@ -275,4 +314,3 @@ function DocumentsPage() {
     </AppShell>
   );
 }
-

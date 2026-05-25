@@ -110,10 +110,6 @@ function TrainingPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (isSuperAdmin) {
-      toast.error("Select a company from the header before creating training.");
-      return;
-    }
     setSubmitting(true);
     try {
       await apiClient.post(ENDPOINTS.training.create, {

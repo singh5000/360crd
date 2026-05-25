@@ -24,8 +24,8 @@ const envSchema = z.object({
 
   // Auth
   JWT_SECRET: z.string().min(32),
-  JWT_ACCESS_EXPIRES: z.string().default("15m"),
-  JWT_REFRESH_EXPIRES: z.string().default("7d"),
+  JWT_ACCESS_EXPIRES: z.string().default("1h"),
+  JWT_REFRESH_EXPIRES: z.string().default("30d"),
   JWT_ISSUER: z.string().default("360crd.io"),
   JWT_AUDIENCE: z.string().default("360crd-api"),
   ENCRYPTION_KEY: z.string().length(64),

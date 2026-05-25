@@ -87,10 +87,6 @@ function InductionsPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (isSuperAdmin) {
-      toast.error("Select a company from the header before creating an induction.");
-      return;
-    }
     setSubmitting(true);
     try {
       await apiClient.post(ENDPOINTS.inductions.create, {

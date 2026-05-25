@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"demo\\\\|quick\")",
+      "Bash(xargs grep -l \"switchRole\\\\|impersonate\\\\|roleSwitch\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\offc-projects\\\\crd360\\\\frontend\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "PowerShell(cmd /c \"dir /A /B D:\\\\offc-projects\\\\crd360\\\\frontend-admin\\\\\" 2>&1)",
+      "Bash(dir /offc-projects/crd360)",
+      "Bash(powershell.exe -Command \"Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object LocalPort, State, OwningProcess\")",
+      "Bash(cmd.exe /c \"netstat -ano | findstr :3000\")",
+      "Bash(bun run *)",
+      "Bash(redis-cli KEYS \"*rate*\")",
+      "Bash(redis-cli.exe KEYS \"*rate*\")",
+      "Bash(cmd.exe /c \"redis-cli KEYS \\\\\"*rate*\\\\\"\")",
+      "Bash(cmd.exe /c \"redis-cli KEYS \\\\\"*limit*\\\\\"\")",
+      "Bash(docker exec *)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\offc-projects\\\\crd360\" -Recurse -Name)",
+      "Bash(Select-String -Pattern \"\\(incident|app\\)\")",
+      "Bash(Select-Object -First 30)",
+      "Bash(Get-ChildItem -Path \"d:\\\\offc-projects\\\\crd360\" -Directory)",
+      "Bash(Select-Object -ExpandProperty Name)"
+    ]
+  }
+}

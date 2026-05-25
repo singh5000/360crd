@@ -24,7 +24,20 @@
       "Bash(xargs kill -9)",
       "Bash(fuser -k 3000/tcp)",
       "Bash(curl -s http://localhost:3000/health)",
-      "Read(//d/offc-projects/**)"
+      "Read(//d/offc-projects/**)",
+      "PowerShell(cmd /c \"dir /a d:\\\\offc-projects\\\\crd360\\\\backend\")",
+      "PowerShell(cmd /c \"dir /a d:\\\\offc-projects\\\\crd360\\\\frontend\\\\src\")",
+      "PowerShell(cmd /c \"dir /a d:\\\\offc-projects\\\\crd360\\\\backend\\\\apps\")",
+      "PowerShell(cmd /c \"dir /a d:\\\\offc-projects\\\\crd360\\\\backend\\\\packages\")",
+      "PowerShell(cmd /c \"dir /a /s d:\\\\offc-projects\\\\crd360\\\\backend\\\\apps\\\\api\")",
+      "PowerShell(findstr /v \"node_modules\")",
+      "PowerShell(cmd /c \"dir /a d:\\\\offc-projects\\\\crd360\\\\backend\\\\packages\\\\database\")",
+      "PowerShell(cmd /c \"type d:\\\\offc-projects\\\\crd360\\\\backend\\\\packages\\\\database\\\\package.json\")",
+      "PowerShell(cmd /c \"dir /a /s d:\\\\offc-projects\\\\crd360\\\\frontend\\\\src\")",
+      "PowerShell(cmd /c \"dir /a d:\\\\offc-projects\\\\crd360\\\\backend\\\\packages\\\\database\\\\prisma\")",
+      "PowerShell(cmd /c \"type d:\\\\offc-projects\\\\crd360\\\\backend\\\\packages\\\\database\\\\src\\\\client.ts\")",
+      "PowerShell(cmd /c \"dir /a d:\\\\offc-projects\\\\crd360\\\\backend\\\\packages\\\\shared-types\\\\src\")",
+      "PowerShell(cmd /c \"mkdir d:\\\\offc-projects\\\\crd360\\\\backend\\\\apps\\\\api\\\\src\\\\modules\\\\public\")"
     ]
   }
 }
