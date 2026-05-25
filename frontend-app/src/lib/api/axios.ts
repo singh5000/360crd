@@ -6,6 +6,9 @@ const TOKEN_KEY = "360crd.token";
 const REFRESH_KEY = "360crd.refreshToken";
 const TENANT_SLUG_KEY = "360crd.tenantSlug";
 
+let isRefreshing = false;
+let refreshQueue: Array<(token: string | null) => void> = [];
+
 export function getAuthToken(): string | null {
   if (typeof window === "undefined") return null;
   try { return window.localStorage.getItem(TOKEN_KEY); } catch { return null; }
@@ -71,11 +74,76 @@ http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// ── Response: normalize errors (refresh logic lives in interceptors.ts) ────
+// ── Response: auto-refresh on 401, then normalize errors ──────────────────
 http.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<{ error?: { message?: string; code?: string }; message?: string; code?: string; details?: unknown }>) => {
+  async (error: AxiosError<{ error?: { message?: string; code?: string }; message?: string; code?: string; details?: unknown }>) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     const status = error.response?.status ?? 0;
+
+    // Auto-refresh access token on 401 (skip if this is already a retry or a refresh/logout call)
+    if (
+      status === 401 &&
+      !originalRequest._retry &&
+      originalRequest.url &&
+      !originalRequest.url.includes("/auth/refresh") &&
+      !originalRequest.url.includes("/auth/logout")
+    ) {
+      const storedRefresh = getRefreshToken();
+      if (storedRefresh) {
+        if (isRefreshing) {
+          // Queue this request until refresh completes
+          return new Promise((resolve, reject) => {
+            refreshQueue.push((newToken) => {
+              if (!newToken) return reject(error);
+              originalRequest.headers = originalRequest.headers ?? {};
+              (originalRequest.headers as Record<string, string>).Authorization = `Bearer ${newToken}`;
+              resolve(http(originalRequest));
+            });
+          });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+          const tenantSlug = getActiveTenantSlug();
+          const res = await axios.post(
+            `${API_BASE_URL}/auth/refresh`,
+            { refreshToken: storedRefresh },
+            { headers: { "Content-Type": "application/json", "X-Tenant-Slug": tenantSlug } }
+          );
+          const { accessToken, refreshToken: newRefresh } = res.data?.data ?? {};
+          if (!accessToken) throw new Error("No token in refresh response");
+
+          setAuthToken(accessToken);
+          if (newRefresh) setRefreshToken(newRefresh);
+
+          // Notify queued requests
+          refreshQueue.forEach((cb) => cb(accessToken));
+          refreshQueue = [];
+
+          originalRequest.headers = originalRequest.headers ?? {};
+          (originalRequest.headers as Record<string, string>).Authorization = `Bearer ${accessToken}`;
+          return http(originalRequest);
+        } catch {
+          // Refresh failed — clear session and redirect to login
+          refreshQueue.forEach((cb) => cb(null));
+          refreshQueue = [];
+          setAuthToken(null);
+          setRefreshToken(null);
+          if (typeof window !== "undefined") window.location.href = "/login";
+          return Promise.reject(error);
+        } finally {
+          isRefreshing = false;
+        }
+      } else {
+        // No refresh token — redirect to login
+        setAuthToken(null);
+        if (typeof window !== "undefined") window.location.href = "/login";
+      }
+    }
+
     const data = error.response?.data as any;
     const apiError: ApiError = {
       status,
