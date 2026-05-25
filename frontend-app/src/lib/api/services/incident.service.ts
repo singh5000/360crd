@@ -104,12 +104,12 @@ export interface ListIncidentsParams {
 
 export interface CreateIncidentPayload {
   title: string;
-  description?: string;
-  category?: string;
+  description: string;
+  category: string;
   subcategory?: string;
   type: string;
   severity: string;
-  priority: string;
+  priority: number;
   occurredAt: string;
   siteId?: string;
   customerId?: string;

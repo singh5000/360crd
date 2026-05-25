@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { Sheet, SheetContent, SheetPortal, SheetOverlay } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetPortal, SheetOverlay, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -46,9 +46,9 @@ export function ModuleDrawer({
           {/* Header */}
           <div className="flex items-start justify-between border-b border-border/60 px-6 py-4 shrink-0">
             <div className="min-w-0 pr-4">
-              <h2 className="text-base font-semibold tracking-tight text-foreground">{title}</h2>
+              <SheetTitle className="text-base font-semibold tracking-tight text-foreground">{title}</SheetTitle>
               {description && (
-                <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
+                <SheetDescription className="mt-0.5 text-sm text-muted-foreground">{description}</SheetDescription>
               )}
             </div>
             <button

@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/app/audits/create")({
   component: CreateAuditPage,
 });
 
-const AUDIT_TYPES = ["INTERNAL", "EXTERNAL", "SUPPLIER", "REGULATORY", "ISO9001", "ISO14001", "ISO45001", "CUSTOM"];
+const AUDIT_TYPES = ["SCHEDULED", "UNANNOUNCED", "FOLLOW_UP", "COMPLIANCE", "INTERNAL", "EXTERNAL"];
 
 function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
@@ -38,7 +38,7 @@ function CreateAuditPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("INTERNAL");
+  const [type, setType] = useState("SCHEDULED");
   const [scheduledAt, setScheduledAt] = useState("");
   const [dueDate, setDueDate] = useState("");
 

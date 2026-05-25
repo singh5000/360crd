@@ -112,11 +112,13 @@ export const authStore = {
   },
 };
 
+const SERVER_SNAPSHOT: AuthState = { isAuthenticated: false, user: null };
+
 export function useAuth() {
   return useSyncExternalStore(
     authStore.subscribe,
     authStore.getState,
-    () => ({ isAuthenticated: false, user: null }) as AuthState,
+    () => SERVER_SNAPSHOT,
   );
 }
 

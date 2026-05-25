@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { ArrowLeft, CheckCircle2, Send } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
@@ -21,9 +21,30 @@ export const Route = createFileRoute("/_authenticated/app/incidents/create")({
   component: CreateIncidentPage,
 });
 
-const INCIDENT_TYPES = ["SAFETY", "ENVIRONMENTAL", "QUALITY", "SECURITY", "NEAR_MISS", "PROPERTY_DAMAGE", "OTHER"];
+const INCIDENT_TYPES = [
+  { value: "INCIDENT",      label: "Incident" },
+  { value: "NEAR_MISS",     label: "Near Miss" },
+  { value: "HAZARD",        label: "Hazard" },
+  { value: "OBSERVATION",   label: "Observation" },
+  { value: "ENVIRONMENTAL", label: "Environmental" },
+];
+
+const INCIDENT_CATEGORIES = [
+  { value: "SAFETY",          label: "Safety" },
+  { value: "ENVIRONMENTAL",   label: "Environmental" },
+  { value: "QUALITY",         label: "Quality" },
+  { value: "SECURITY",        label: "Security" },
+  { value: "NEAR_MISS",       label: "Near Miss" },
+  { value: "PROPERTY_DAMAGE", label: "Property Damage" },
+  { value: "OTHER",           label: "Other" },
+];
+
 const SEVERITIES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
+
+const PRIORITY_MAP: Record<string, number> = {
+  LOW: 1, MEDIUM: 3, HIGH: 4, CRITICAL: 5,
+};
 
 const SEVERITY_COLOR: Record<string, string> = {
   LOW: "border-muted-foreground/40 text-muted-foreground",
@@ -45,10 +66,12 @@ function CreateIncidentPage() {
   const { createIncident } = useIncidentStore();
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [descError, setDescError] = useState("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [type, setType] = useState("SAFETY");
+  const [type, setType] = useState("INCIDENT");
+  const [category, setCategory] = useState("SAFETY");
   const [severity, setSeverity] = useState("MEDIUM");
   const [priority, setPriority] = useState("MEDIUM");
   const [occurredAt, setOccurredAt] = useState(() => new Date().toISOString().slice(0, 16));
@@ -57,14 +80,20 @@ function CreateIncidentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
+    if (description.trim().length < 10) {
+      setDescError("Description must be at least 10 characters.");
+      return;
+    }
+    setDescError("");
     setSubmitting(true);
     try {
       await createIncident({
         title: title.trim(),
-        description: description.trim() || undefined,
+        description: description.trim(),
         type,
+        category,
         severity,
-        priority,
+        priority: PRIORITY_MAP[priority],
         occurredAt: new Date(occurredAt).toISOString(),
         location: location.trim() || undefined,
       });
@@ -114,24 +143,42 @@ function CreateIncidentPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <FieldLabel>Description</FieldLabel>
+                  <FieldLabel>Description *</FieldLabel>
                   <Textarea
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="What happened, where and when. Include any immediate actions taken."
+                    onChange={(e) => { setDescription(e.target.value); setDescError(""); }}
+                    placeholder="What happened, where and when. Include any immediate actions taken. (min. 10 characters)"
                     rows={4}
+                    required
                   />
+                  {descError && (
+                    <p className="mt-1 px-1 text-xs text-red-500">{descError}</p>
+                  )}
                 </div>
 
                 <div>
-                  <FieldLabel>Type *</FieldLabel>
+                  <FieldLabel>Incident Type *</FieldLabel>
                   <Select value={type} onValueChange={setType}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       {INCIDENT_TYPES.map((t) => (
-                        <SelectItem key={t} value={t}>{t.replace(/_/g, " ")}</SelectItem>
+                        <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <FieldLabel>Category *</FieldLabel>
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INCIDENT_CATEGORIES.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -205,7 +252,7 @@ function CreateIncidentPage() {
                 </Button>
                 <Button
                   type="submit"
-                  disabled={submitting || !title.trim()}
+                  disabled={submitting || !title.trim() || description.trim().length < 10}
                   className="gap-2 [background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
                 >
                   <Send className="h-4 w-4" />
@@ -219,4 +266,3 @@ function CreateIncidentPage() {
     </AppShell>
   );
 }
-
