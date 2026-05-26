@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, RefreshCw, FileText, ChevronRight, FolderOpen, Upload } from "lucide-react";
+import {
+  Plus, RefreshCw, FileText, FolderOpen, Upload,
+  Download, Trash2, BookCheck, Archive,
+} from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { http } from "@/lib/api/axios";
 import { apiClient } from "@/lib/api/api-client";
@@ -57,6 +60,13 @@ const FILTER_CONFIGS = [
 
 const EMPTY_FORM = { title: "", category: "POLICY", description: "" };
 
+function formatBytes(bytes?: number | null) {
+  if (!bytes) return "—";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 function DocumentsPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +96,7 @@ function DocumentsPage() {
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return items.filter((item) => {
-      if (q && !item.title.toLowerCase().includes(q)) return false;
+      if (q && !item.title.toLowerCase().includes(q) && !item.filename?.toLowerCase().includes(q)) return false;
       if (filterVals.status && filterVals.status !== "ALL" && item.status !== filterVals.status) return false;
       if (filterVals.category && filterVals.category !== "ALL" && item.category !== filterVals.category) return false;
       return true;
@@ -110,22 +120,72 @@ function DocumentsPage() {
     setSubmitting(true);
     try {
       const fd = new FormData();
-      fd.append("file", file);
+      // Metadata fields BEFORE the file so backend parses them in order
       fd.append("title", form.title || file.name);
       fd.append("category", form.category);
       if (form.description) fd.append("description", form.description);
+      fd.append("file", file);
 
       await http.post(ENDPOINTS.documents.upload, fd, {
         headers: { "Content-Type": undefined as any },
       });
-      toast.success("Document uploaded");
+      toast.success("Document uploaded successfully");
       setDrawerOpen(false);
       resetDrawer();
       load();
-    } catch {
-      toast.error("Failed to upload document");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to upload document");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleDownload(item: any) {
+    try {
+      const res = await http.get<any>(ENDPOINTS.documents.download(item.id));
+      const { url, filename } = res.data?.data ?? {};
+      if (!url) throw new Error("No URL returned");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename || item.filename || "download";
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      toast.error("Failed to get download link");
+    }
+  }
+
+  async function handlePublish(item: any) {
+    try {
+      await http.put(ENDPOINTS.documents.publish(item.id));
+      toast.success("Document published");
+      setItems((prev) => prev.map((d) => d.id === item.id ? { ...d, status: "PUBLISHED" } : d));
+    } catch {
+      toast.error("Failed to publish document");
+    }
+  }
+
+  async function handleArchive(item: any) {
+    try {
+      await http.put(ENDPOINTS.documents.archive(item.id));
+      toast.success("Document archived");
+      setItems((prev) => prev.map((d) => d.id === item.id ? { ...d, status: "ARCHIVED" } : d));
+    } catch {
+      toast.error("Failed to archive document");
+    }
+  }
+
+  async function handleDelete(item: any) {
+    if (!confirm(`Delete "${item.title}"? This cannot be undone.`)) return;
+    try {
+      await http.delete(ENDPOINTS.documents.remove(item.id));
+      toast.success("Document deleted");
+      setItems((prev) => prev.filter((d) => d.id !== item.id));
+    } catch {
+      toast.error("Failed to delete document");
     }
   }
 
@@ -195,15 +255,19 @@ function DocumentsPage() {
                   <TableHead className="text-xs">Title</TableHead>
                   <TableHead className="text-xs">Status</TableHead>
                   <TableHead className="hidden md:table-cell text-xs">Category</TableHead>
+                  <TableHead className="hidden lg:table-cell text-xs">File</TableHead>
                   <TableHead className="hidden sm:table-cell text-xs">Version</TableHead>
+                  <TableHead className="hidden sm:table-cell text-xs">Size</TableHead>
                   <TableHead className="hidden sm:table-cell text-xs">Uploaded</TableHead>
-                  <TableHead className="w-8" />
+                  <TableHead className="w-[130px] text-xs text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.map((item: any) => (
-                  <TableRow key={item.id} className="border-border/60 hover:bg-muted/30">
-                    <TableCell className="font-medium">{item.title}</TableCell>
+                  <TableRow key={item.id} className="group border-border/60 hover:bg-muted/30">
+                    <TableCell>
+                      <p className="font-medium text-sm leading-snug">{item.title}</p>
+                    </TableCell>
                     <TableCell>
                       <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", STATUS_COLOR[item.status] ?? "bg-gray-500/10 text-gray-600")}>
                         {item.status}
@@ -214,14 +278,68 @@ function DocumentsPage() {
                         {item.category ?? "—"}
                       </span>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                    <TableCell className="hidden lg:table-cell">
+                      <p className="max-w-[160px] truncate text-xs text-muted-foreground font-mono" title={item.filename}>
+                        {item.filename ?? "—"}
+                      </p>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
                       {item.version ? `v${item.version}` : "—"}
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                    <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
+                      {formatBytes(item.fileSize)}
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell text-xs text-muted-foreground">
                       {new Date(item.createdAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-right pr-3">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-1">
+                        {/* Download */}
+                        <button
+                          type="button"
+                          title="Download"
+                          onClick={() => handleDownload(item)}
+                          className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                        </button>
+
+                        {/* Publish (DRAFT only) */}
+                        {can("document:update") && item.status === "DRAFT" && (
+                          <button
+                            type="button"
+                            title="Publish"
+                            onClick={() => handlePublish(item)}
+                            className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-green-500/10 hover:text-green-600"
+                          >
+                            <BookCheck className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+
+                        {/* Archive (PUBLISHED only) */}
+                        {can("document:update") && item.status === "PUBLISHED" && (
+                          <button
+                            type="button"
+                            title="Archive"
+                            onClick={() => handleArchive(item)}
+                            className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-orange-500/10 hover:text-orange-600"
+                          >
+                            <Archive className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+
+                        {/* Delete */}
+                        {can("document:delete") && (
+                          <button
+                            type="button"
+                            title="Delete"
+                            onClick={() => handleDelete(item)}
+                            className="rounded p-1.5 text-muted-foreground transition-colors hover:bg-red-500/10 hover:text-red-500"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -244,8 +362,9 @@ function DocumentsPage() {
               form="upload-doc-form-app"
               type="submit"
               disabled={submitting || !file}
-              className="[background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
+              className="gap-2 [background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
             >
+              <Upload className="h-4 w-4" />
               {submitting ? "Uploading..." : "Upload Document"}
             </Button>
           </div>
@@ -260,11 +379,14 @@ function DocumentsPage() {
             >
               <Upload className="h-8 w-8 text-muted-foreground/50" />
               {file ? (
-                <p className="mt-2 text-sm font-medium text-foreground">{file.name}</p>
+                <>
+                  <p className="mt-2 text-sm font-medium text-foreground">{file.name}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{formatBytes(file.size)}</p>
+                </>
               ) : (
                 <p className="mt-2 text-sm text-muted-foreground">Click to select a file</p>
               )}
-              <p className="mt-1 text-xs text-muted-foreground/70">PDF, Word, Excel, Images — up to 50 MB</p>
+              <p className="mt-1 text-xs text-muted-foreground/70">PDF, Word, Excel, Images — up to 100 MB</p>
             </div>
             <input
               ref={fileInputRef}

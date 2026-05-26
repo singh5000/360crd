@@ -1,8 +1,9 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus, RefreshCw, FileText, ChevronRight, FolderOpen } from "lucide-react";
+import { Plus, RefreshCw, FileText, Download, FolderOpen } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { apiClient } from "@/lib/api/api-client";
+import { http } from "@/lib/api/axios";
 import { ENDPOINTS } from "@/lib/api/endpoints";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -76,6 +77,22 @@ function DocumentsPage() {
       // silently handle
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDownload(id: string, title: string) {
+    try {
+      const res = await http.get<any>(ENDPOINTS.documents.download(id));
+      const url: string = res.data?.data?.url ?? res.data?.url;
+      if (!url) { toast.error("Download URL not available"); return; }
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = res.data?.data?.filename ?? res.data?.filename ?? title;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      toast.error("Failed to download document");
     }
   }
 
@@ -184,7 +201,7 @@ function DocumentsPage() {
                   <TableHead className="hidden md:table-cell text-xs">Category</TableHead>
                   <TableHead className="hidden sm:table-cell text-xs">Version</TableHead>
                   <TableHead className="hidden sm:table-cell text-xs">Created</TableHead>
-                  <TableHead className="w-8" />
+                  <TableHead className="w-20 text-xs text-right pr-3">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -208,7 +225,17 @@ function DocumentsPage() {
                       {new Date(item.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right pr-3">
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                      {item.fileUrl && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          title="Download"
+                          onClick={() => handleDownload(item.id, item.title)}
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

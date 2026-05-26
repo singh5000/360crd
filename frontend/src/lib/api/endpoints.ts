@@ -179,6 +179,8 @@ export const ENDPOINTS = {
   documents: {
     list:     "/documents",
     detail:   (id: string) => `/documents/${id}`,
+    upload:   "/documents/upload",
+    download: (id: string) => `/documents/${id}/download`,
     create:   "/documents",
     update:   (id: string) => `/documents/${id}`,
     remove:   (id: string) => `/documents/${id}`,

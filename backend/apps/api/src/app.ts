@@ -144,6 +144,21 @@ export async function buildApp() {
       if (!filePath.startsWith(uploadsDir) || !existsSync(filePath)) {
         return reply.status(404).send({ success: false, error: { code: "NOT_FOUND", message: "File not found" } });
       }
+      const EXT_MIME: Record<string, string> = {
+        ".pdf": "application/pdf", ".png": "image/png", ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp",
+        ".svg": "image/svg+xml", ".txt": "text/plain", ".csv": "text/csv",
+        ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ".xls": "application/vnd.ms-excel",
+        ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".doc": "application/msword", ".zip": "application/zip",
+        ".mp4": "video/mp4", ".mp3": "audio/mpeg",
+      };
+      const ext = path.extname(filePath).toLowerCase();
+      const mimeType = EXT_MIME[ext] ?? "application/octet-stream";
+      const filename = path.basename(filePath);
+      reply.header("Content-Type", mimeType);
+      reply.header("Content-Disposition", `inline; filename="${filename}"`);
       return reply.send(createReadStream(filePath));
     });
   }

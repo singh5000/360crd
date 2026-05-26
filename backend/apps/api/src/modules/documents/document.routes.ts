@@ -27,6 +27,34 @@ const UpdateDocumentDto = z.object({
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).optional(),
 });
 
+async function parseMultipart(req: any): Promise<{
+  fileBuffer: Buffer;
+  filename: string;
+  mimetype: string;
+  fields: Record<string, string>;
+} | null> {
+  let fileBuffer: Buffer | null = null;
+  let filename = "";
+  let mimetype = "";
+  const fields: Record<string, string> = {};
+
+  const parts = req.parts();
+  for await (const part of parts) {
+    if (part.type === "file") {
+      const chunks: Buffer[] = [];
+      for await (const chunk of part.file) chunks.push(chunk);
+      fileBuffer = Buffer.concat(chunks);
+      filename = part.filename;
+      mimetype = part.mimetype;
+    } else {
+      fields[part.fieldname] = part.value as string;
+    }
+  }
+
+  if (!fileBuffer || !filename) return null;
+  return { fileBuffer, filename, mimetype, fields };
+}
+
 export default async function documentRoutes(fastify: FastifyInstance) {
   fastify.addHook("preHandler", authenticate);
 
@@ -83,43 +111,40 @@ export default async function documentRoutes(fastify: FastifyInstance) {
     return reply.send({ success: true, data: doc });
   });
 
-  // ── Get presigned download URL ────────────────────────────────────────────
+  // ── Get download URL ──────────────────────────────────────────────────────
   fastify.get("/:id/download", { preHandler: [authorize("document:read")] }, async (req, reply) => {
     const { id } = req.params as { id: string };
     const r = req as any;
     const doc = await prisma.document.findFirst({ where: { id, tenantId: r.tenantId, deletedAt: null } });
     if (!doc) throw new NotFoundError("Document", id);
 
-    const signedUrl = await getPresignedDownloadUrl(doc.storageKey ?? doc.fileUrl, 3600);
-    return reply.send({ success: true, data: { url: signedUrl, expiresIn: 3600, filename: doc.filename } });
+    const url = await getPresignedDownloadUrl(doc.storageKey ?? doc.fileUrl, 3600);
+    return reply.send({ success: true, data: { url, expiresIn: 3600, filename: doc.filename } });
   });
 
   // ── Upload document ────────────────────────────────────────────────────────
   fastify.post("/upload", { preHandler: [authorize("document:create")] }, async (req, reply) => {
-    const data = await req.file();
-    if (!data) {
-      return reply.status(400).send({ success: false, error: { code: "NO_FILE", message: "No file uploaded" } });
-    }
-
-    const chunks: Buffer[] = [];
-    for await (const chunk of data.file) chunks.push(chunk);
-    const buffer = Buffer.concat(chunks);
-    const checksum = createHash("sha256").update(buffer).digest("hex");
-
     const r = req as any;
     const tenantId = r.tenantId;
     if (!tenantId) {
       return reply.status(400).send({ success: false, error: { code: "NO_TENANT", message: "Select a company before uploading" } });
     }
-    const fields = data.fields as any;
-    const title = fields?.title?.value || data.filename;
-    const category = fields?.category?.value || "GENERAL";
-    const description = fields?.description?.value;
-    const tags = fields?.tags?.value ? JSON.parse(fields.tags.value) : [];
 
-    const storageKey = buildStorageKey(tenantId, "documents", data.filename);
-    const { url: fileUrl } = await uploadFile(storageKey, buffer, data.mimetype, {
-      tenantId, uploadedBy: r.userId, originalName: data.filename,
+    const parsed = await parseMultipart(req);
+    if (!parsed) {
+      return reply.status(400).send({ success: false, error: { code: "NO_FILE", message: "No file uploaded" } });
+    }
+    const { fileBuffer, filename, mimetype, fields } = parsed;
+
+    const checksum = createHash("sha256").update(fileBuffer).digest("hex");
+    const title = fields.title || filename;
+    const category = fields.category || "GENERAL";
+    const description = fields.description;
+    const tags = fields.tags ? JSON.parse(fields.tags) : [];
+
+    const storageKey = buildStorageKey(tenantId, "documents", filename);
+    const { url: fileUrl } = await uploadFile(storageKey, fileBuffer, mimetype, {
+      tenantId, uploadedBy: r.userId, originalName: filename,
     });
 
     const doc = await prisma.document.create({
@@ -127,11 +152,11 @@ export default async function documentRoutes(fastify: FastifyInstance) {
         tenantId,
         uploadedById: r.userId,
         title,
-        filename: data.filename,
+        filename,
         fileUrl,
         storageKey,
-        fileSize: buffer.length,
-        mimeType: data.mimetype,
+        fileSize: fileBuffer.length,
+        mimeType: mimetype,
         checksum,
         category,
         description,
@@ -141,7 +166,7 @@ export default async function documentRoutes(fastify: FastifyInstance) {
       },
     });
 
-    await auditLog.log({ tenantId, userId: r.userId, action: "CREATE", resource: "document", resourceId: doc.id, after: { title, filename: data.filename } });
+    await auditLog.log({ tenantId, userId: r.userId, action: "CREATE", resource: "document", resourceId: doc.id, after: { title, filename } });
     return reply.status(201).send({ success: true, data: doc });
   });
 
@@ -187,22 +212,19 @@ export default async function documentRoutes(fastify: FastifyInstance) {
     const existing = await prisma.document.findFirst({ where: { id: documentId, tenantId: r.tenantId, deletedAt: null } });
     if (!existing) throw new NotFoundError("Document", documentId);
 
-    const data = await req.file();
-    if (!data) return reply.status(400).send({ success: false, error: { code: "NO_FILE", message: "No file uploaded" } });
+    const parsed = await parseMultipart(req);
+    if (!parsed) {
+      return reply.status(400).send({ success: false, error: { code: "NO_FILE", message: "No file uploaded" } });
+    }
+    const { fileBuffer, filename, mimetype } = parsed;
 
-    const chunks: Buffer[] = [];
-    for await (const chunk of data.file) chunks.push(chunk);
-    const buffer = Buffer.concat(chunks);
-    const checksum = createHash("sha256").update(buffer).digest("hex");
+    const checksum = createHash("sha256").update(fileBuffer).digest("hex");
+    const storageKey = buildStorageKey(r.tenantId, "documents", filename);
+    const { url: fileUrl } = await uploadFile(storageKey, fileBuffer, mimetype, { tenantId: r.tenantId, uploadedBy: r.userId });
 
-    const storageKey = buildStorageKey(r.tenantId, "documents", data.filename);
-    const { url: fileUrl } = await uploadFile(storageKey, buffer, data.mimetype, { tenantId: r.tenantId, uploadedBy: r.userId });
-
-    // Bump version
     const versionParts = (existing.version || "1.0").split(".");
     const newVersion = `${versionParts[0]}.${Number(versionParts[1] || 0) + 1}`;
 
-    // Save old version to DocumentVersion
     await basePrisma.documentVersion.create({
       data: {
         documentId,
@@ -214,19 +236,9 @@ export default async function documentRoutes(fastify: FastifyInstance) {
       },
     });
 
-    // Update document to new version
     const updated = await prisma.document.update({
       where: { id: documentId },
-      data: {
-        fileUrl,
-        storageKey,
-        filename: data.filename,
-        fileSize: buffer.length,
-        mimeType: data.mimetype,
-        checksum,
-        version: newVersion,
-        status: "DRAFT",
-      },
+      data: { fileUrl, storageKey, filename, fileSize: fileBuffer.length, mimeType: mimetype, checksum, version: newVersion, status: "DRAFT" },
     });
 
     return reply.status(201).send({ success: true, data: updated });
@@ -244,7 +256,6 @@ export default async function documentRoutes(fastify: FastifyInstance) {
     }
 
     await prisma.document.update({ where: { id }, data: { deletedAt: new Date() } });
-
     await auditLog.log({ tenantId: r.tenantId, userId: r.userId, action: "DELETE", resource: "document", resourceId: id, before: { title: doc.title } });
     return reply.status(204).send();
   });

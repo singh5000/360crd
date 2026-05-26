@@ -180,6 +180,7 @@ export const ENDPOINTS = {
     list:     "/documents",
     detail:   (id: string) => `/documents/${id}`,
     upload:   "/documents/upload",
+    download: (id: string) => `/documents/${id}/download`,
     update:   (id: string) => `/documents/${id}`,
     remove:   (id: string) => `/documents/${id}`,
     publish:  (id: string) => `/documents/${id}/publish`,
