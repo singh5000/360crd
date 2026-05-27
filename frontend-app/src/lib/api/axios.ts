@@ -71,6 +71,10 @@ http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   config.headers = config.headers ?? {};
   if (token) (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
   (config.headers as Record<string, string>)["X-Tenant-Slug"] = tenantSlug;
+  // Let the browser set Content-Type with the correct boundary for FormData
+  if (config.data instanceof FormData) {
+    delete (config.headers as Record<string, string>)["Content-Type"];
+  }
   return config;
 });
 

@@ -128,9 +128,7 @@ function DocumentsPage() {
       if (form.description) fd.append("description", form.description);
       fd.append("file", file);
 
-      await http.post(ENDPOINTS.documents.upload, fd, {
-        headers: { "Content-Type": undefined as any },
-      });
+      await http.post(ENDPOINTS.documents.upload, fd);
       toast.success("Document uploaded successfully");
       setDrawerOpen(false);
       resetDrawer();

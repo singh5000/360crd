@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, RefreshCw, Recycle, Scale, DollarSign, ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
@@ -26,10 +26,10 @@ export const Route = createFileRoute("/_authenticated/app/waste")({
 });
 
 const STATUS_COLOR: Record<string, string> = {
-  PENDING:  "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  APPROVED: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  DISPOSED: "bg-green-500/10 text-green-600 border-green-500/20",
-  REJECTED: "bg-red-500/10 text-red-600 border-red-500/20",
+  PENDING:    "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  COLLECTED:  "bg-blue-500/10  text-blue-600  border-blue-500/20",
+  DISPOSED:   "bg-green-500/10 text-green-600 border-green-500/20",
+  DOCUMENTED: "bg-purple-500/10 text-purple-600 border-purple-500/20",
 };
 
 const WASTE_CATEGORIES = ["HAZARDOUS", "NON_HAZARDOUS", "RECYCLABLE", "ELECTRONIC", "ORGANIC", "LIQUID", "OTHER"];
@@ -40,10 +40,10 @@ const FILTER_CONFIGS = [
     key: "status",
     label: "Status",
     options: [
-      { value: "PENDING", label: "Pending" },
-      { value: "APPROVED", label: "Approved" },
-      { value: "DISPOSED", label: "Disposed" },
-      { value: "REJECTED", label: "Rejected" },
+      { value: "PENDING",    label: "Pending" },
+      { value: "COLLECTED",  label: "Collected" },
+      { value: "DISPOSED",   label: "Disposed" },
+      { value: "DOCUMENTED", label: "Documented" },
     ],
   },
   {
@@ -53,7 +53,11 @@ const FILTER_CONFIGS = [
   },
 ];
 
-const EMPTY_FORM = { wasteType: "", category: "NON_HAZARDOUS", quantity: "", unit: "KG", disposedAt: "" };
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+const EMPTY_FORM = { type: "", category: "NON_HAZARDOUS", quantity: "", unit: "KG", disposedAt: todayStr() };
 
 function WastePage() {
   const [items, setItems] = useState<any[]>([]);
@@ -69,17 +73,14 @@ function WastePage() {
   async function load() {
     setLoading(true);
     try {
-      const [listRes, statsRes] = await Promise.all([
-        apiClient.get<any>(ENDPOINTS.waste.list, { limit: 100 }),
-        apiClient.get<any>(ENDPOINTS.waste.stats),
-      ]);
+      const listRes = await apiClient.get<any>(ENDPOINTS.waste.list, { limit: 100 });
       setItems(listRes.data ?? []);
-      setStats(statsRes.data ?? null);
     } catch {
-      // silently handle
+      toast.error("Failed to load waste records");
     } finally {
       setLoading(false);
     }
+    apiClient.get<any>(ENDPOINTS.waste.stats).then((r) => setStats(r.data ?? null)).catch(() => {});
   }
 
   useEffect(() => { load(); }, []);
@@ -87,7 +88,7 @@ function WastePage() {
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return items.filter((item) => {
-      if (q && !item.wasteType.toLowerCase().includes(q)) return false;
+      if (q && !(item.type ?? "").toLowerCase().includes(q) && !(item.description ?? "").toLowerCase().includes(q)) return false;
       if (filterVals.status && filterVals.status !== "ALL" && item.status !== filterVals.status) return false;
       if (filterVals.category && filterVals.category !== "ALL" && item.category !== filterVals.category) return false;
       return true;
@@ -95,28 +96,35 @@ function WastePage() {
   }, [items, search, filterVals]);
 
   const pills = [
-    { label: "Total Records", value: stats?.total ?? items.length, icon: Recycle, color: "text-foreground" },
-    { label: "Quantity (kg)", value: stats?.totalQuantity ? stats.totalQuantity.toFixed(1) : "—", icon: Scale, color: "text-blue-500" },
-    { label: "Est. Cost", value: stats?.totalCost ? `$${stats.totalCost.toFixed(0)}` : "—", icon: DollarSign, color: "text-green-500" },
+    { label: "Total Records", value: stats?.total ?? items.length,                                    icon: Recycle,     color: "text-foreground" },
+    { label: "Total Qty",     value: stats?.totalQuantity ? `${Number(stats.totalQuantity).toFixed(1)}` : "—", icon: Scale, color: "text-blue-500" },
+    { label: "Est. Cost",     value: stats?.totalCost ? `$${Number(stats.totalCost).toFixed(0)}` : "—",        icon: DollarSign, color: "text-green-500" },
   ];
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!form.type.trim()) { toast.error("Waste type is required"); return; }
+    if (!form.quantity || Number(form.quantity) <= 0) { toast.error("Valid quantity is required"); return; }
     setSubmitting(true);
     try {
+      // Convert date-only string to ISO datetime for backend validation
+      const disposedAtIso = form.disposedAt
+        ? new Date(form.disposedAt + "T00:00:00.000Z").toISOString()
+        : new Date().toISOString();
+
       await apiClient.post(ENDPOINTS.waste.create, {
-        wasteType: form.wasteType,
-        category: form.category,
-        quantity: Number(form.quantity),
-        unit: form.unit,
-        disposedAt: form.disposedAt || undefined,
+        type:       form.type,
+        category:   form.category,
+        quantity:   Number(form.quantity),
+        unit:       form.unit,
+        disposedAt: disposedAtIso,
       });
-      toast.success("Waste record created");
+      toast.success("Waste record logged");
       setDrawerOpen(false);
-      setForm(EMPTY_FORM);
+      setForm({ ...EMPTY_FORM, disposedAt: todayStr() });
       load();
-    } catch {
-      toast.error("Failed to create waste record");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to log waste record");
     } finally {
       setSubmitting(false);
     }
@@ -197,7 +205,7 @@ function WastePage() {
               <TableBody>
                 {filtered.map((item: any) => (
                   <TableRow key={item.id} className="border-border/60 cursor-pointer hover:bg-muted/30">
-                    <TableCell className="font-medium">{item.wasteType}</TableCell>
+                    <TableCell className="font-medium">{item.type ?? item.description ?? "—"}</TableCell>
                     <TableCell>
                       <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", STATUS_COLOR[item.status] ?? "bg-gray-500/10 text-gray-600")}>
                         {item.status}
@@ -236,9 +244,9 @@ function WastePage() {
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setDrawerOpen(false)}>Cancel</Button>
             <Button
-              form="create-waste-form"
+              form="create-waste-form-app"
               type="submit"
-              disabled={submitting || !form.wasteType || !form.quantity}
+              disabled={submitting || !form.type || !form.quantity}
               className="[background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
             >
               {submitting ? "Logging..." : "Log Waste"}
@@ -246,22 +254,22 @@ function WastePage() {
           </div>
         }
       >
-        <form id="create-waste-form" onSubmit={handleSubmit} className="space-y-5">
+        <form id="create-waste-form-app" onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="waste-type">Waste Type <span className="text-red-500">*</span></Label>
+            <Label htmlFor="waste-type-app">Waste Type <span className="text-red-500">*</span></Label>
             <Input
-              id="waste-type"
+              id="waste-type-app"
               placeholder="e.g. Chemical Solvent"
-              value={form.wasteType}
-              onChange={(e) => setForm((f) => ({ ...f, wasteType: e.target.value }))}
+              value={form.type}
+              onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="waste-category">Category</Label>
+            <Label htmlFor="waste-category-app">Category</Label>
             <Select value={form.category} onValueChange={(v) => setForm((f) => ({ ...f, category: v }))}>
-              <SelectTrigger id="waste-category"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="waste-category-app"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {WASTE_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c.replace(/_/g, " ")}</SelectItem>)}
               </SelectContent>
@@ -270,12 +278,12 @@ function WastePage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="waste-qty">Quantity <span className="text-red-500">*</span></Label>
+              <Label htmlFor="waste-qty-app">Quantity <span className="text-red-500">*</span></Label>
               <Input
-                id="waste-qty"
+                id="waste-qty-app"
                 type="number"
                 step="0.01"
-                min="0"
+                min="0.01"
                 placeholder="0.00"
                 value={form.quantity}
                 onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
@@ -283,9 +291,9 @@ function WastePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="waste-unit">Unit</Label>
+              <Label htmlFor="waste-unit-app">Unit</Label>
               <Select value={form.unit} onValueChange={(v) => setForm((f) => ({ ...f, unit: v }))}>
-                <SelectTrigger id="waste-unit"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="waste-unit-app"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {WASTE_UNITS.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}
                 </SelectContent>
@@ -294,12 +302,13 @@ function WastePage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="waste-date">Disposal Date</Label>
+            <Label htmlFor="waste-date-app">Disposal Date <span className="text-red-500">*</span></Label>
             <Input
-              id="waste-date"
+              id="waste-date-app"
               type="date"
               value={form.disposedAt}
               onChange={(e) => setForm((f) => ({ ...f, disposedAt: e.target.value }))}
+              required
             />
           </div>
         </form>
@@ -307,4 +316,3 @@ function WastePage() {
     </AppShell>
   );
 }
-

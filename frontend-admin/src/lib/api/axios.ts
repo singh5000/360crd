@@ -71,6 +71,9 @@ http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   config.headers = config.headers ?? {};
   if (token) (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
   (config.headers as Record<string, string>)["X-Tenant-Slug"] = tenantSlug;
+  if (config.data instanceof FormData) {
+    delete (config.headers as Record<string, string>)["Content-Type"];
+  }
   return config;
 });
 

@@ -370,7 +370,7 @@ function FieldForm({
 
 function FormBuilderPage() {
   const { user } = useAuth();
-  const canManage = user?.role === "manager" || user?.role === "tenant_admin";
+  const canManage = user?.role === "tenant_admin";
 
   const [activeTab, setActiveTab] = useState<"incident" | "audit">("incident");
   const [fields, setFields] = useState<FormField[]>([]);

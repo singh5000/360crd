@@ -61,7 +61,7 @@ export default async function assetRoutes(fastify: FastifyInstance) {
       prisma.asset.groupBy({ by: ["status"], where: base, _count: true }),
       prisma.asset.groupBy({ by: ["condition"], where: base, _count: true }),
       prisma.asset.count({
-        where: { ...base, nextServiceDate: { lt: new Date() }, status: { not: "DECOMMISSIONED" as any } },
+        where: { ...base, nextServiceDate: { lt: new Date() }, status: { not: "DISPOSED" as any } },
       }),
     ]);
     return reply.send({
@@ -200,7 +200,7 @@ export default async function assetRoutes(fastify: FastifyInstance) {
     const r = req as any;
     const existing = await prisma.asset.findFirst({ where: { id, tenantId: r.tenantId, deletedAt: null } });
     if (!existing) throw new NotFoundError("Asset", id);
-    await prisma.asset.update({ where: { id }, data: { deletedAt: new Date(), status: "DECOMMISSIONED" as any } });
+    await prisma.asset.update({ where: { id }, data: { deletedAt: new Date(), status: "DISPOSED" as any } });
     return reply.status(204).send();
   });
 

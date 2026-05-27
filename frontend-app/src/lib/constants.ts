@@ -178,7 +178,7 @@ export const appNavGroups: NavGroup[] = [
     items: [
       { label: "Reports", to: "/app/reports", icon: Archive, permission: "report:read" },
       { label: "Notifications", to: "/app/notifications", icon: Bell },
-      { label: "Form Builder", to: "/app/form-fields", icon: Sliders, role: "manager" },
+      { label: "Form Builder", to: "/app/form-fields", icon: Sliders, role: "tenant_admin" },
     ],
   },
 ];

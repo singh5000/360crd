@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus, RefreshCw, Package, Wrench, AlertTriangle, CheckCircle2, ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
@@ -26,10 +26,11 @@ export const Route = createFileRoute("/_authenticated/app/assets")({
 });
 
 const STATUS_COLOR: Record<string, string> = {
-  ACTIVE:      "bg-green-500/10 text-green-600 border-green-500/20",
-  IN_USE:      "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  OPERATIONAL: "bg-green-500/10 text-green-600 border-green-500/20",
   MAINTENANCE: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  REPAIR:      "bg-blue-500/10 text-blue-600 border-blue-500/20",
   RETIRED:     "bg-gray-500/10 text-gray-600 border-gray-500/20",
+  LOST:        "bg-orange-500/10 text-orange-600 border-orange-500/20",
   DISPOSED:    "bg-red-500/10 text-red-600 border-red-500/20",
 };
 
@@ -42,11 +43,12 @@ const FILTER_CONFIGS = [
     key: "status",
     label: "Status",
     options: [
-      { value: "ACTIVE", label: "Active" },
-      { value: "IN_USE", label: "In Use" },
+      { value: "OPERATIONAL", label: "Operational" },
       { value: "MAINTENANCE", label: "Maintenance" },
-      { value: "RETIRED", label: "Retired" },
-      { value: "DISPOSED", label: "Disposed" },
+      { value: "REPAIR",      label: "Repair" },
+      { value: "RETIRED",     label: "Retired" },
+      { value: "LOST",        label: "Lost" },
+      { value: "DISPOSED",    label: "Disposed" },
     ],
   },
   {
@@ -56,7 +58,7 @@ const FILTER_CONFIGS = [
   },
 ];
 
-const EMPTY_FORM = { name: "", category: "EQUIPMENT", brand: "", model: "", assetTag: "" };
+const EMPTY_FORM = { name: "", category: "EQUIPMENT", make: "", model: "", assetTag: "" };
 
 function AssetsPage() {
   const [items, setItems] = useState<any[]>([]);
@@ -72,17 +74,15 @@ function AssetsPage() {
   async function load() {
     setLoading(true);
     try {
-      const [listRes, statsRes] = await Promise.all([
-        apiClient.get<any>(ENDPOINTS.assets.list, { limit: 100 }),
-        apiClient.get<any>(ENDPOINTS.assets.stats),
-      ]);
+      const listRes = await apiClient.get<any>(ENDPOINTS.assets.list, { limit: 100 });
       setItems(listRes.data ?? []);
-      setStats(statsRes.data ?? null);
     } catch {
-      // silently handle
+      toast.error("Failed to load assets");
     } finally {
       setLoading(false);
     }
+    // Stats are non-critical — load independently
+    apiClient.get<any>(ENDPOINTS.assets.stats).then((r) => setStats(r.data ?? null)).catch(() => {});
   }
 
   useEffect(() => { load(); }, []);
@@ -98,10 +98,10 @@ function AssetsPage() {
   }, [items, search, filterVals]);
 
   const pills = [
-    { label: "Total Assets", value: stats?.total ?? items.length, icon: Package, color: "text-foreground" },
-    { label: "Active", value: stats?.active ?? items.filter((i) => i.status === "ACTIVE").length, icon: CheckCircle2, color: "text-green-500" },
-    { label: "Maintenance", value: stats?.maintenance ?? items.filter((i) => i.status === "MAINTENANCE").length, icon: Wrench, color: "text-yellow-500" },
-    { label: "Service Overdue", value: stats?.serviceOverdue ?? 0, icon: AlertTriangle, color: "text-red-500" },
+    { label: "Total Assets",    value: stats?.total ?? items.length, icon: Package,       color: "text-foreground" },
+    { label: "Operational",     value: stats?.byStatus?.OPERATIONAL ?? items.filter((i) => i.status === "OPERATIONAL").length, icon: CheckCircle2, color: "text-green-500" },
+    { label: "Maintenance",     value: stats?.byStatus?.MAINTENANCE ?? items.filter((i) => i.status === "MAINTENANCE").length, icon: Wrench,       color: "text-yellow-500" },
+    { label: "Service Overdue", value: stats?.serviceOverdue ?? 0,  icon: AlertTriangle,  color: "text-red-500" },
   ];
 
   async function handleSubmit(e: React.FormEvent) {
@@ -109,10 +109,10 @@ function AssetsPage() {
     setSubmitting(true);
     try {
       await apiClient.post(ENDPOINTS.assets.create, {
-        name: form.name,
+        name:     form.name,
         category: form.category,
-        brand: form.brand || undefined,
-        model: form.model || undefined,
+        make:     form.make     || undefined,
+        model:    form.model    || undefined,
         assetTag: form.assetTag || undefined,
       });
       toast.success("Asset registered");
@@ -192,7 +192,7 @@ function AssetsPage() {
                   <TableHead className="text-xs">Name</TableHead>
                   <TableHead className="text-xs">Status</TableHead>
                   <TableHead className="hidden md:table-cell text-xs">Category</TableHead>
-                  <TableHead className="hidden lg:table-cell text-xs">Brand / Model</TableHead>
+                  <TableHead className="hidden lg:table-cell text-xs">Make / Model</TableHead>
                   <TableHead className="hidden lg:table-cell text-xs">Asset Tag</TableHead>
                   <TableHead className="hidden sm:table-cell text-xs">Site</TableHead>
                   <TableHead className="w-8" />
@@ -204,7 +204,7 @@ function AssetsPage() {
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell>
                       <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", STATUS_COLOR[item.status] ?? "bg-gray-500/10 text-gray-600")}>
-                        {item.status.replace(/_/g, " ")}
+                        {item.status?.replace(/_/g, " ")}
                       </span>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
@@ -213,7 +213,7 @@ function AssetsPage() {
                       </span>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
-                      {[item.brand, item.model].filter(Boolean).join(" ") || "—"}
+                      {[item.make, item.model].filter(Boolean).join(" ") || "—"}
                     </TableCell>
                     <TableCell className="hidden lg:table-cell font-mono text-xs text-muted-foreground">{item.assetTag ?? "—"}</TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">{item.site?.name ?? "—"}</TableCell>
@@ -238,7 +238,7 @@ function AssetsPage() {
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setDrawerOpen(false)}>Cancel</Button>
             <Button
-              form="create-asset-form"
+              form="create-asset-form-app"
               type="submit"
               disabled={submitting || !form.name}
               className="[background:var(--gradient-primary)] text-primary-foreground hover:brightness-110"
@@ -248,11 +248,11 @@ function AssetsPage() {
           </div>
         }
       >
-        <form id="create-asset-form" onSubmit={handleSubmit} className="space-y-5">
+        <form id="create-asset-form-app" onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="asset-name">Asset Name <span className="text-red-500">*</span></Label>
+            <Label htmlFor="asset-name-app">Asset Name <span className="text-red-500">*</span></Label>
             <Input
-              id="asset-name"
+              id="asset-name-app"
               placeholder="e.g. Forklift — Warehouse A"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -261,9 +261,9 @@ function AssetsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="asset-category">Category</Label>
+            <Label htmlFor="asset-category-app">Category</Label>
             <Select value={form.category} onValueChange={(v) => setForm((f) => ({ ...f, category: v }))}>
-              <SelectTrigger id="asset-category"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="asset-category-app"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {ASSET_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
@@ -272,19 +272,19 @@ function AssetsPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="asset-brand">Brand</Label>
-              <Input id="asset-brand" placeholder="Toyota" value={form.brand} onChange={(e) => setForm((f) => ({ ...f, brand: e.target.value }))} />
+              <Label htmlFor="asset-make-app">Make</Label>
+              <Input id="asset-make-app" placeholder="Toyota" value={form.make} onChange={(e) => setForm((f) => ({ ...f, make: e.target.value }))} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="asset-model">Model</Label>
-              <Input id="asset-model" placeholder="8FBE15" value={form.model} onChange={(e) => setForm((f) => ({ ...f, model: e.target.value }))} />
+              <Label htmlFor="asset-model-app">Model</Label>
+              <Input id="asset-model-app" placeholder="8FBE15" value={form.model} onChange={(e) => setForm((f) => ({ ...f, model: e.target.value }))} />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="asset-tag">Asset Tag</Label>
+            <Label htmlFor="asset-tag-app">Asset Tag</Label>
             <Input
-              id="asset-tag"
+              id="asset-tag-app"
               placeholder="AST-0001"
               value={form.assetTag}
               onChange={(e) => setForm((f) => ({ ...f, assetTag: e.target.value }))}
@@ -295,4 +295,3 @@ function AssetsPage() {
     </AppShell>
   );
 }
-
