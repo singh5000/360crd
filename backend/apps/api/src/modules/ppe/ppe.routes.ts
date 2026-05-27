@@ -5,6 +5,7 @@ import { prisma, basePrisma } from "@360crd/database";
 import { z } from "zod";
 import { ValidationError, NotFoundError } from "../../shared/errors/http.errors";
 import { AuditLogService } from "../audit-logs/audit-log.service";
+import { notificationQueue } from "@360crd/queue";
 
 const auditLog = new AuditLogService();
 
@@ -194,6 +195,16 @@ export default async function ppeRoutes(fastify: FastifyInstance) {
       }),
       prisma.pPEItem.update({ where: { id: ppeItemId }, data: { status: "ASSIGNED" as any } }),
     ]);
+
+    notificationQueue.add("ppe-assigned", {
+      tenantId: r.tenantId,
+      userId: body.data.userId,
+      type: "ppe_assigned",
+      title: "PPE Assigned to You",
+      message: `${ppe.name} (${ppe.category}) has been assigned to you.`,
+      channel: "in-app",
+      data: { ppeItemId, assignmentId: assignment.id },
+    }).catch(() => {});
 
     return reply.status(201).send({ success: true, data: assignment });
   });

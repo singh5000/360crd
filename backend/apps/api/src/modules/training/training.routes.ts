@@ -6,6 +6,7 @@ import { z } from "zod";
 import { ValidationError, NotFoundError, ForbiddenError } from "../../shared/errors/http.errors";
 import { AuditLogService } from "../audit-logs/audit-log.service";
 import { eventBus, Events } from "@360crd/event-bus";
+import { notificationQueue } from "@360crd/queue";
 
 const auditLog = new AuditLogService();
 
@@ -265,6 +266,17 @@ export default async function trainingRoutes(fastify: FastifyInstance) {
     });
 
     eventBus.publish({ type: Events.TRAINING_ENROLLMENT_CREATED, tenantId: r.tenantId, userId: r.userId, payload: { trainingId, enrollmentId: enrollment.id } });
+
+    notificationQueue.add("training-enrolled", {
+      tenantId: r.tenantId,
+      userId: r.userId,
+      type: "training_enrolled",
+      title: "Training Enrollment Confirmed",
+      message: `You have been enrolled in "${training.title}". Start learning when you're ready.`,
+      channel: "in-app",
+      data: { trainingId, enrollmentId: enrollment.id },
+    }).catch(() => {});
+
     return reply.status(201).send({ success: true, data: enrollment });
   });
 
@@ -289,6 +301,23 @@ export default async function trainingRoutes(fastify: FastifyInstance) {
     );
 
     const enrolled = results.filter(r => r.status === "fulfilled").length;
+
+    // Notify each successfully enrolled user
+    const enrolledUserIds = userIds.filter((_, i) => results[i].status === "fulfilled");
+    await Promise.all(
+      enrolledUserIds.map(userId =>
+        notificationQueue.add("training-bulk-enrolled", {
+          tenantId: r.tenantId,
+          userId,
+          type: "training_enrolled",
+          title: "Training Assigned",
+          message: `You have been enrolled in "${training.title}". Complete it at your earliest convenience.`,
+          channel: "in-app",
+          data: { trainingId },
+        }).catch(() => {})
+      )
+    );
+
     return reply.send({ success: true, data: { enrolled, total: userIds.length } });
   });
 
@@ -377,6 +406,16 @@ export default async function trainingRoutes(fastify: FastifyInstance) {
 
     if (passed) {
       eventBus.publish({ type: Events.TRAINING_COMPLETED, tenantId: r.tenantId, userId: r.userId, payload: { trainingId, enrollmentId: enrollment.id, score: percentage } });
+
+      notificationQueue.add("training-completed", {
+        tenantId: r.tenantId,
+        userId: r.userId,
+        type: "training_completed",
+        title: "Training Completed",
+        message: `Congratulations! You passed "${training.title}" with a score of ${Math.round(percentage)}%.`,
+        channel: "in-app",
+        data: { trainingId, score: Math.round(percentage) },
+      }).catch(() => {});
     }
 
     return reply.send({ success: true, data: { score: percentage, passed, enrollment: updated } });

@@ -108,7 +108,7 @@ function ReportsPage() {
       const url = URL.createObjectURL(res.data as Blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${report.title.replace(/[^a-z0-9]/gi, "_")}.json`;
+      a.download = `${report.title.replace(/[^a-z0-9]/gi, "_")}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

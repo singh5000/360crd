@@ -64,13 +64,29 @@ export const http: AxiosInstance = axios.create({
   headers: { "Content-Type": "application/json", Accept: "application/json" },
 });
 
-// ── Request: inject JWT + X-Tenant-Slug ───────────────────────────────────
+// ── Request: inject JWT + X-Tenant-Slug + X-Tenant-ID (for superadmin) ──────
 http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAuthToken();
   const tenantSlug = getActiveTenantSlug();
   config.headers = config.headers ?? {};
   if (token) (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
   (config.headers as Record<string, string>)["X-Tenant-Slug"] = tenantSlug;
+
+  // When superadmin has selected a specific tenant, send its ID so the backend
+  // creates/queries data in that tenant's context rather than the admin's own tenant.
+  try {
+    if (typeof window !== "undefined") {
+      const raw = window.localStorage.getItem("360crd.tenantContext");
+      if (raw) {
+        const ctx = JSON.parse(raw) as { state?: { selectedTenantId?: string | null } };
+        const selectedTenantId = ctx?.state?.selectedTenantId;
+        if (selectedTenantId) {
+          (config.headers as Record<string, string>)["X-Tenant-ID"] = selectedTenantId;
+        }
+      }
+    }
+  } catch { /* ignore localStorage/parse errors */ }
+
   if (config.data instanceof FormData) {
     delete (config.headers as Record<string, string>)["Content-Type"];
   }

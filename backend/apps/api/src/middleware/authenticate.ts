@@ -46,23 +46,35 @@ export async function authenticate(
   // Load permissions (cached)
   const permissions = await getPermissions(payload.sub, payload.tid, payload.roles);
 
+  // For superadmin: allow the admin panel to scope requests to a specific tenant
+  // via X-Tenant-ID header (sent when the admin selects a company in the header).
+  const isSuperAdmin = payload.typ === "SUPER_ADMIN";
+  const headerTenantId = (request.headers["x-tenant-id"] as string | undefined)?.trim();
+  const tenantOverrideActive = isSuperAdmin && !!headerTenantId;
+  const effectiveTenantId = tenantOverrideActive ? headerTenantId! : payload.tid;
+
   // Attach to request
   (request as any).userId = payload.sub;
-  (request as any).tenantId = payload.tid;
+  (request as any).tenantId = effectiveTenantId;
   (request as any).tenantSlug = payload.tsl;
   (request as any).sessionId = payload.sid;
   (request as any).customerId = payload.cid ?? null;
   (request as any).userType = payload.typ;
   (request as any).roles = payload.roles;
   (request as any).permissions = permissions;
-  (request as any).isSuperAdmin = payload.typ === "SUPER_ADMIN";
+  (request as any).isSuperAdmin = isSuperAdmin;
 
-  // Wire Prisma tenant isolation — without this, row-level filtering won't work
+  // Wire Prisma tenant isolation.
+  // - Superadmin with a selected tenant (X-Tenant-ID header): apply filter to that
+  //   tenant so reads/writes land in the correct company context.
+  // - Superadmin without selection: bypass Prisma filter so cross-tenant operations
+  //   (e.g. listing all tenants/feedback) still work. Routes that always apply
+  //   `tenantId: r.tenantId` will fall back to the admin's own system tenant.
   tenantContext.enterWith({
-    tenantId: payload.tid,
+    tenantId: effectiveTenantId,
     userId: payload.sub,
     sessionId: payload.sid,
-    skipTenantFilter: payload.typ === "SUPER_ADMIN",
+    skipTenantFilter: isSuperAdmin && !tenantOverrideActive,
   });
 
   // Refresh session TTL on activity

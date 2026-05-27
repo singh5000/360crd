@@ -5,6 +5,7 @@ import { prisma } from "@360crd/database";
 import { z } from "zod";
 import { ValidationError, NotFoundError } from "../../shared/errors/http.errors";
 import { AuditLogService } from "../audit-logs/audit-log.service";
+import { notificationQueue } from "@360crd/queue";
 
 const auditLog = new AuditLogService();
 
@@ -142,6 +143,17 @@ export default async function wasteRoutes(fastify: FastifyInstance) {
     });
 
     await auditLog.log({ tenantId: r.tenantId, userId: r.userId, action: "CREATE", resource: "waste", resourceId: record.id, after: { category: record.category, quantity: body.data.quantity, unit: record.unit } });
+
+    notificationQueue.add("waste-created", {
+      tenantId: r.tenantId,
+      userId: r.userId,
+      type: "waste_created",
+      title: "Waste Record Logged",
+      message: `A new waste record (${body.data.category}, ${body.data.quantity} ${body.data.unit}) has been logged and is pending review.`,
+      channel: "in-app",
+      data: { wasteRecordId: record.id },
+    }).catch(() => {});
+
     return reply.status(201).send({ success: true, data: record });
   });
 

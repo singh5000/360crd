@@ -5,6 +5,7 @@ import { authorize } from "../../middleware/authorize";
 import { prisma } from "@360crd/database";
 import { reportQueue } from "@360crd/queue";
 import { ValidationError, NotFoundError } from "../../shared/errors/http.errors";
+import { generateReportPdf } from "./pdf.helper";
 
 const RequestReportDto = z.object({
   title: z.string().min(3),
@@ -133,7 +134,7 @@ export default async function reportRoutes(fastify: FastifyInstance) {
     return reply.send({ success: true, data: report });
   });
 
-  // ── Download report data (re-generates inline as JSON) ────────────────────
+  // ── Download report as PDF ─────────────────────────────────────────────────
   fastify.get("/:id/download", { preHandler: [authorize("report:read")] }, async (req, reply) => {
     const { id } = req.params as { id: string };
     const r = req as any;
@@ -143,9 +144,13 @@ export default async function reportRoutes(fastify: FastifyInstance) {
     const { generateReportData } = await import("../../workers/report.worker");
     const data = await generateReportData(report.type as string, r.tenantId, (report.parameters as any) ?? {});
 
-    reply.header("Content-Type", "application/json");
-    reply.header("Content-Disposition", `attachment; filename="${report.title.replace(/[^a-z0-9]/gi, "_")}.json"`);
-    return reply.send(JSON.stringify({ report: { id: report.id, title: report.title, type: report.type, generatedAt: report.generatedAt }, data }, null, 2));
+    const pdfBuffer = await generateReportPdf(report, data);
+    const filename = `${report.title.replace(/[^a-z0-9]/gi, "_")}.pdf`;
+
+    reply.header("Content-Type", "application/pdf");
+    reply.header("Content-Disposition", `attachment; filename="${filename}"`);
+    reply.header("Content-Length", pdfBuffer.length);
+    return reply.send(pdfBuffer);
   });
 
   // ── Delete report ──────────────────────────────────────────────────────────

@@ -7,12 +7,14 @@ const ICON: Record<NotificationType, typeof Bell> = {
   audit: ClipboardCheck,
   incident: ShieldAlert,
   maintenance: Wrench,
+  general: Bell,
 };
 
 const TONE: Record<NotificationType, string> = {
   audit: "bg-info/10 text-info ring-info/20",
   incident: "bg-destructive/10 text-destructive ring-destructive/20",
   maintenance: "bg-warning/10 text-warning ring-warning/20",
+  general: "bg-muted/50 text-muted-foreground ring-border",
 };
 
 export function NotificationPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
