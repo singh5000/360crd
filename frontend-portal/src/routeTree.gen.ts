@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedPortalTrainingRouteImport } from './routes/_authenticated/portal/training'
 import { Route as AuthenticatedPortalSitesRouteImport } from './routes/_authenticated/portal/sites'
+import { Route as AuthenticatedPortalSettingsRouteImport } from './routes/_authenticated/portal/settings'
 import { Route as AuthenticatedPortalReportsRouteImport } from './routes/_authenticated/portal/reports'
 import { Route as AuthenticatedPortalNotificationsRouteImport } from './routes/_authenticated/portal/notifications'
 import { Route as AuthenticatedPortalInductionsRouteImport } from './routes/_authenticated/portal/inductions'
@@ -26,10 +27,12 @@ import { Route as AuthenticatedPortalDocumentsRouteImport } from './routes/_auth
 import { Route as AuthenticatedPortalDashboardRouteImport } from './routes/_authenticated/portal/dashboard'
 import { Route as AuthenticatedPortalAuditsRouteImport } from './routes/_authenticated/portal/audits'
 import { Route as AuthenticatedPortalTrainingIndexRouteImport } from './routes/_authenticated/portal/training.index'
+import { Route as AuthenticatedPortalSitesIndexRouteImport } from './routes/_authenticated/portal/sites.index'
 import { Route as AuthenticatedPortalInductionsIndexRouteImport } from './routes/_authenticated/portal/inductions.index'
 import { Route as AuthenticatedPortalIncidentsIndexRouteImport } from './routes/_authenticated/portal/incidents.index'
 import { Route as AuthenticatedPortalAuditsIndexRouteImport } from './routes/_authenticated/portal/audits.index'
 import { Route as AuthenticatedPortalTrainingIdRouteImport } from './routes/_authenticated/portal/training.$id'
+import { Route as AuthenticatedPortalSitesIdRouteImport } from './routes/_authenticated/portal/sites.$id'
 import { Route as AuthenticatedPortalInductionsIdRouteImport } from './routes/_authenticated/portal/inductions.$id'
 import { Route as AuthenticatedPortalIncidentsIdRouteImport } from './routes/_authenticated/portal/incidents.$id'
 import { Route as AuthenticatedPortalAuditsIdRouteImport } from './routes/_authenticated/portal/audits.$id'
@@ -73,6 +76,12 @@ const AuthenticatedPortalSitesRoute =
   AuthenticatedPortalSitesRouteImport.update({
     id: '/sites',
     path: '/sites',
+    getParentRoute: () => AuthenticatedPortalRoute,
+  } as any)
+const AuthenticatedPortalSettingsRoute =
+  AuthenticatedPortalSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => AuthenticatedPortalRoute,
   } as any)
 const AuthenticatedPortalReportsRoute =
@@ -129,6 +138,12 @@ const AuthenticatedPortalTrainingIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedPortalTrainingRoute,
   } as any)
+const AuthenticatedPortalSitesIndexRoute =
+  AuthenticatedPortalSitesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPortalSitesRoute,
+  } as any)
 const AuthenticatedPortalInductionsIndexRoute =
   AuthenticatedPortalInductionsIndexRouteImport.update({
     id: '/',
@@ -152,6 +167,12 @@ const AuthenticatedPortalTrainingIdRoute =
     id: '/$id',
     path: '/$id',
     getParentRoute: () => AuthenticatedPortalTrainingRoute,
+  } as any)
+const AuthenticatedPortalSitesIdRoute =
+  AuthenticatedPortalSitesIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPortalSitesRoute,
   } as any)
 const AuthenticatedPortalInductionsIdRoute =
   AuthenticatedPortalInductionsIdRouteImport.update({
@@ -186,15 +207,18 @@ export interface FileRoutesByFullPath {
   '/portal/inductions': typeof AuthenticatedPortalInductionsRouteWithChildren
   '/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
   '/portal/reports': typeof AuthenticatedPortalReportsRoute
-  '/portal/sites': typeof AuthenticatedPortalSitesRoute
+  '/portal/settings': typeof AuthenticatedPortalSettingsRoute
+  '/portal/sites': typeof AuthenticatedPortalSitesRouteWithChildren
   '/portal/training': typeof AuthenticatedPortalTrainingRouteWithChildren
   '/portal/audits/$id': typeof AuthenticatedPortalAuditsIdRoute
   '/portal/incidents/$id': typeof AuthenticatedPortalIncidentsIdRoute
   '/portal/inductions/$id': typeof AuthenticatedPortalInductionsIdRoute
+  '/portal/sites/$id': typeof AuthenticatedPortalSitesIdRoute
   '/portal/training/$id': typeof AuthenticatedPortalTrainingIdRoute
   '/portal/audits/': typeof AuthenticatedPortalAuditsIndexRoute
   '/portal/incidents/': typeof AuthenticatedPortalIncidentsIndexRoute
   '/portal/inductions/': typeof AuthenticatedPortalInductionsIndexRoute
+  '/portal/sites/': typeof AuthenticatedPortalSitesIndexRoute
   '/portal/training/': typeof AuthenticatedPortalTrainingIndexRoute
 }
 export interface FileRoutesByTo {
@@ -208,14 +232,16 @@ export interface FileRoutesByTo {
   '/portal/feedback': typeof AuthenticatedPortalFeedbackRoute
   '/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
   '/portal/reports': typeof AuthenticatedPortalReportsRoute
-  '/portal/sites': typeof AuthenticatedPortalSitesRoute
+  '/portal/settings': typeof AuthenticatedPortalSettingsRoute
   '/portal/audits/$id': typeof AuthenticatedPortalAuditsIdRoute
   '/portal/incidents/$id': typeof AuthenticatedPortalIncidentsIdRoute
   '/portal/inductions/$id': typeof AuthenticatedPortalInductionsIdRoute
+  '/portal/sites/$id': typeof AuthenticatedPortalSitesIdRoute
   '/portal/training/$id': typeof AuthenticatedPortalTrainingIdRoute
   '/portal/audits': typeof AuthenticatedPortalAuditsIndexRoute
   '/portal/incidents': typeof AuthenticatedPortalIncidentsIndexRoute
   '/portal/inductions': typeof AuthenticatedPortalInductionsIndexRoute
+  '/portal/sites': typeof AuthenticatedPortalSitesIndexRoute
   '/portal/training': typeof AuthenticatedPortalTrainingIndexRoute
 }
 export interface FileRoutesById {
@@ -234,15 +260,18 @@ export interface FileRoutesById {
   '/_authenticated/portal/inductions': typeof AuthenticatedPortalInductionsRouteWithChildren
   '/_authenticated/portal/notifications': typeof AuthenticatedPortalNotificationsRoute
   '/_authenticated/portal/reports': typeof AuthenticatedPortalReportsRoute
-  '/_authenticated/portal/sites': typeof AuthenticatedPortalSitesRoute
+  '/_authenticated/portal/settings': typeof AuthenticatedPortalSettingsRoute
+  '/_authenticated/portal/sites': typeof AuthenticatedPortalSitesRouteWithChildren
   '/_authenticated/portal/training': typeof AuthenticatedPortalTrainingRouteWithChildren
   '/_authenticated/portal/audits/$id': typeof AuthenticatedPortalAuditsIdRoute
   '/_authenticated/portal/incidents/$id': typeof AuthenticatedPortalIncidentsIdRoute
   '/_authenticated/portal/inductions/$id': typeof AuthenticatedPortalInductionsIdRoute
+  '/_authenticated/portal/sites/$id': typeof AuthenticatedPortalSitesIdRoute
   '/_authenticated/portal/training/$id': typeof AuthenticatedPortalTrainingIdRoute
   '/_authenticated/portal/audits/': typeof AuthenticatedPortalAuditsIndexRoute
   '/_authenticated/portal/incidents/': typeof AuthenticatedPortalIncidentsIndexRoute
   '/_authenticated/portal/inductions/': typeof AuthenticatedPortalInductionsIndexRoute
+  '/_authenticated/portal/sites/': typeof AuthenticatedPortalSitesIndexRoute
   '/_authenticated/portal/training/': typeof AuthenticatedPortalTrainingIndexRoute
 }
 export interface FileRouteTypes {
@@ -261,15 +290,18 @@ export interface FileRouteTypes {
     | '/portal/inductions'
     | '/portal/notifications'
     | '/portal/reports'
+    | '/portal/settings'
     | '/portal/sites'
     | '/portal/training'
     | '/portal/audits/$id'
     | '/portal/incidents/$id'
     | '/portal/inductions/$id'
+    | '/portal/sites/$id'
     | '/portal/training/$id'
     | '/portal/audits/'
     | '/portal/incidents/'
     | '/portal/inductions/'
+    | '/portal/sites/'
     | '/portal/training/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -283,14 +315,16 @@ export interface FileRouteTypes {
     | '/portal/feedback'
     | '/portal/notifications'
     | '/portal/reports'
-    | '/portal/sites'
+    | '/portal/settings'
     | '/portal/audits/$id'
     | '/portal/incidents/$id'
     | '/portal/inductions/$id'
+    | '/portal/sites/$id'
     | '/portal/training/$id'
     | '/portal/audits'
     | '/portal/incidents'
     | '/portal/inductions'
+    | '/portal/sites'
     | '/portal/training'
   id:
     | '__root__'
@@ -308,15 +342,18 @@ export interface FileRouteTypes {
     | '/_authenticated/portal/inductions'
     | '/_authenticated/portal/notifications'
     | '/_authenticated/portal/reports'
+    | '/_authenticated/portal/settings'
     | '/_authenticated/portal/sites'
     | '/_authenticated/portal/training'
     | '/_authenticated/portal/audits/$id'
     | '/_authenticated/portal/incidents/$id'
     | '/_authenticated/portal/inductions/$id'
+    | '/_authenticated/portal/sites/$id'
     | '/_authenticated/portal/training/$id'
     | '/_authenticated/portal/audits/'
     | '/_authenticated/portal/incidents/'
     | '/_authenticated/portal/inductions/'
+    | '/_authenticated/portal/sites/'
     | '/_authenticated/portal/training/'
   fileRoutesById: FileRoutesById
 }
@@ -386,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalSitesRouteImport
       parentRoute: typeof AuthenticatedPortalRoute
     }
+    '/_authenticated/portal/settings': {
+      id: '/_authenticated/portal/settings'
+      path: '/settings'
+      fullPath: '/portal/settings'
+      preLoaderRoute: typeof AuthenticatedPortalSettingsRouteImport
+      parentRoute: typeof AuthenticatedPortalRoute
+    }
     '/_authenticated/portal/reports': {
       id: '/_authenticated/portal/reports'
       path: '/reports'
@@ -449,6 +493,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortalTrainingIndexRouteImport
       parentRoute: typeof AuthenticatedPortalTrainingRoute
     }
+    '/_authenticated/portal/sites/': {
+      id: '/_authenticated/portal/sites/'
+      path: '/'
+      fullPath: '/portal/sites/'
+      preLoaderRoute: typeof AuthenticatedPortalSitesIndexRouteImport
+      parentRoute: typeof AuthenticatedPortalSitesRoute
+    }
     '/_authenticated/portal/inductions/': {
       id: '/_authenticated/portal/inductions/'
       path: '/'
@@ -476,6 +527,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/portal/training/$id'
       preLoaderRoute: typeof AuthenticatedPortalTrainingIdRouteImport
       parentRoute: typeof AuthenticatedPortalTrainingRoute
+    }
+    '/_authenticated/portal/sites/$id': {
+      id: '/_authenticated/portal/sites/$id'
+      path: '/$id'
+      fullPath: '/portal/sites/$id'
+      preLoaderRoute: typeof AuthenticatedPortalSitesIdRouteImport
+      parentRoute: typeof AuthenticatedPortalSitesRoute
     }
     '/_authenticated/portal/inductions/$id': {
       id: '/_authenticated/portal/inductions/$id'
@@ -551,6 +609,22 @@ const AuthenticatedPortalInductionsRouteWithChildren =
     AuthenticatedPortalInductionsRouteChildren,
   )
 
+interface AuthenticatedPortalSitesRouteChildren {
+  AuthenticatedPortalSitesIdRoute: typeof AuthenticatedPortalSitesIdRoute
+  AuthenticatedPortalSitesIndexRoute: typeof AuthenticatedPortalSitesIndexRoute
+}
+
+const AuthenticatedPortalSitesRouteChildren: AuthenticatedPortalSitesRouteChildren =
+  {
+    AuthenticatedPortalSitesIdRoute: AuthenticatedPortalSitesIdRoute,
+    AuthenticatedPortalSitesIndexRoute: AuthenticatedPortalSitesIndexRoute,
+  }
+
+const AuthenticatedPortalSitesRouteWithChildren =
+  AuthenticatedPortalSitesRoute._addFileChildren(
+    AuthenticatedPortalSitesRouteChildren,
+  )
+
 interface AuthenticatedPortalTrainingRouteChildren {
   AuthenticatedPortalTrainingIdRoute: typeof AuthenticatedPortalTrainingIdRoute
   AuthenticatedPortalTrainingIndexRoute: typeof AuthenticatedPortalTrainingIndexRoute
@@ -577,7 +651,8 @@ interface AuthenticatedPortalRouteChildren {
   AuthenticatedPortalInductionsRoute: typeof AuthenticatedPortalInductionsRouteWithChildren
   AuthenticatedPortalNotificationsRoute: typeof AuthenticatedPortalNotificationsRoute
   AuthenticatedPortalReportsRoute: typeof AuthenticatedPortalReportsRoute
-  AuthenticatedPortalSitesRoute: typeof AuthenticatedPortalSitesRoute
+  AuthenticatedPortalSettingsRoute: typeof AuthenticatedPortalSettingsRoute
+  AuthenticatedPortalSitesRoute: typeof AuthenticatedPortalSitesRouteWithChildren
   AuthenticatedPortalTrainingRoute: typeof AuthenticatedPortalTrainingRouteWithChildren
 }
 
@@ -592,7 +667,8 @@ const AuthenticatedPortalRouteChildren: AuthenticatedPortalRouteChildren = {
     AuthenticatedPortalInductionsRouteWithChildren,
   AuthenticatedPortalNotificationsRoute: AuthenticatedPortalNotificationsRoute,
   AuthenticatedPortalReportsRoute: AuthenticatedPortalReportsRoute,
-  AuthenticatedPortalSitesRoute: AuthenticatedPortalSitesRoute,
+  AuthenticatedPortalSettingsRoute: AuthenticatedPortalSettingsRoute,
+  AuthenticatedPortalSitesRoute: AuthenticatedPortalSitesRouteWithChildren,
   AuthenticatedPortalTrainingRoute:
     AuthenticatedPortalTrainingRouteWithChildren,
 }
