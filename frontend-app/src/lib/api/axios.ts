@@ -131,20 +131,26 @@ http.interceptors.response.use(
           (originalRequest.headers as Record<string, string>).Authorization = `Bearer ${accessToken}`;
           return http(originalRequest);
         } catch {
-          // Refresh failed — clear session and redirect to login
           refreshQueue.forEach((cb) => cb(null));
           refreshQueue = [];
           setAuthToken(null);
           setRefreshToken(null);
-          if (typeof window !== "undefined") window.location.href = "/login";
+          if (typeof window !== "undefined") {
+            window.localStorage.removeItem("360crd.tenantContext");
+            window.localStorage.removeItem("360crd.tenantSlug");
+            window.location.href = "/login";
+          }
           return Promise.reject(error);
         } finally {
           isRefreshing = false;
         }
       } else {
-        // No refresh token — redirect to login
         setAuthToken(null);
-        if (typeof window !== "undefined") window.location.href = "/login";
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("360crd.tenantContext");
+          window.localStorage.removeItem("360crd.tenantSlug");
+          window.location.href = "/login";
+        }
       }
     }
 

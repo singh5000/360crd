@@ -90,13 +90,16 @@ export const authStore = {
 
   logout: async () => {
     const refreshToken = getRefreshToken();
-    // Best-effort server-side session revocation — must happen BEFORE clearing token
-    // so axios interceptor still has a valid Authorization header to send
     try { await authService.logout(refreshToken ?? undefined); } catch { /* noop */ }
     setAuthToken(null);
     setRefreshToken(null);
     state = { isAuthenticated: false, user: null };
     persist();
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("360crd.tenantContext");
+      window.localStorage.removeItem("360crd.tenantSlug");
+      window.location.href = "/login";
+    }
   },
 
   setUser: (user: AuthUser) => {

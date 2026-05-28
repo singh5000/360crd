@@ -97,6 +97,13 @@ export const authStore = {
     setRefreshToken(null);
     state = { isAuthenticated: false, user: null };
     persist();
+    // Clear all stale auth-related keys so they don't interfere with re-login
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem("360crd.tenantContext");
+      window.localStorage.removeItem("360crd.tenantSlug");
+      // Hard reload to /login — guarantees all module state is reset
+      window.location.href = "/login";
+    }
   },
 
   setUser: (user: AuthUser) => {

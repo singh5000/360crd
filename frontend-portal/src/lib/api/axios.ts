@@ -128,14 +128,22 @@ http.interceptors.response.use(
           refreshQueue = [];
           setAuthToken(null);
           setRefreshToken(null);
-          if (typeof window !== "undefined") window.location.href = "/login";
+          if (typeof window !== "undefined") {
+            window.localStorage.removeItem("360crd.tenantContext");
+            window.localStorage.removeItem("360crd.tenantSlug");
+            window.location.href = "/login";
+          }
           return Promise.reject(error);
         } finally {
           isRefreshing = false;
         }
       } else {
         setAuthToken(null);
-        if (typeof window !== "undefined") window.location.href = "/login";
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem("360crd.tenantContext");
+          window.localStorage.removeItem("360crd.tenantSlug");
+          window.location.href = "/login";
+        }
       }
     }
 

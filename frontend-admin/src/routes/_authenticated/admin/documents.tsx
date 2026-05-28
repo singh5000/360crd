@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { usePermissions, useAuth } from "@/lib/auth-store";
 import { useTenantGuard } from "@/lib/hooks/useTenantGuard";
+import { useTenantContext } from "@/lib/stores/tenant-context.store";
 
 export const Route = createFileRoute("/_authenticated/admin/documents")({
   head: () => ({ meta: [{ title: "Documents · 360CRD" }] }),
@@ -77,6 +78,7 @@ function DocumentsPage() {
   const can = usePermissions();
   const { user } = useAuth();
   const isSuperAdmin = user?.role === "super_admin";
+  const { selectedTenantId } = useTenantContext();
   const [form, setForm] = useState(EMPTY_FORM);
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -374,7 +376,7 @@ function DocumentsPage() {
         }
       >
         <form id="upload-doc-form-admin" onSubmit={handleSubmit} className="space-y-5">
-          {isSuperAdmin && (
+          {isSuperAdmin && !selectedTenantId && (
             <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-3 py-2.5 text-xs text-yellow-700 dark:text-yellow-400">
               Select a company from the header before uploading.
             </div>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { RefreshCw, Warehouse, MapPin } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { RefreshCw, Warehouse, MapPin, ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/layout/AppShell";
 import { apiClient } from "@/lib/api/api-client";
 import { ENDPOINTS } from "@/lib/api/endpoints";
@@ -24,6 +24,7 @@ function PortalSitesPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   async function load() {
     setLoading(true);
@@ -65,11 +66,15 @@ function PortalSitesPage() {
         ) : (
           <div className="space-y-3">
             {filtered.map((site: any) => (
-              <div key={site.id} className="rounded-xl border border-border/60 bg-card/50 p-4">
+              <div
+                key={site.id}
+                className="rounded-xl border border-border/60 bg-card/50 p-4 cursor-pointer transition-colors hover:bg-accent/30"
+                onClick={() => navigate({ to: "/portal/sites/$id", params: { id: site.id } })}
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3 min-w-0">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10">
-                      <Warehouse className="h-4.5 w-4.5 text-blue-500" />
+                      <Warehouse className="h-4 w-4 text-blue-500" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{site.name}</p>
@@ -78,12 +83,15 @@ function PortalSitesPage() {
                           <MapPin className="h-3 w-3" /> {site.address}
                         </p>
                       )}
-                      {site.industry && <p className="mt-0.5 text-xs text-muted-foreground">{site.industry}</p>}
+                      {site.code && <p className="mt-0.5 text-xs text-muted-foreground font-mono">{site.code}</p>}
                     </div>
                   </div>
-                  <span className={cn("shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium", STATUS_COLOR[site.status] ?? "bg-gray-500/10 text-gray-600")}>
-                    {site.status}
-                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", STATUS_COLOR[site.status] ?? "bg-gray-500/10 text-gray-600")}>
+                      {site.status}
+                    </span>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground/50" />
+                  </div>
                 </div>
               </div>
             ))}
