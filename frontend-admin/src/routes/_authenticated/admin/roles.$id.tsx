@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { usePermissions } from "@/lib/auth-store";
+import { usePermissions, authStore } from "@/lib/auth-store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/roles/$id")({
@@ -143,8 +143,9 @@ function RoleDetailPage() {
 
   useEffect(() => { load(); }, [id]);
 
+  const isSuperAdmin = authStore.getState().user?.role === "super_admin";
   const isSystem = role?.isSystem ?? true;
-  const canEdit  = can("role:update") && !isSystem;
+  const canEdit  = can("role:update") && (!isSystem || isSuperAdmin);
 
   function togglePerm(permId: string) {
     if (!canEdit) return;
@@ -302,9 +303,14 @@ function RoleDetailPage() {
               <span className="text-sm font-semibold">{p.value}</span>
             </div>
           ))}
-          {isSystem && (
+          {isSystem && !isSuperAdmin && (
             <div className="flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2">
               <span className="text-xs text-amber-600">System role — permissions are read-only</span>
+            </div>
+          )}
+          {isSystem && isSuperAdmin && (
+            <div className="flex items-center gap-2 rounded-lg border border-purple-500/20 bg-purple-500/5 px-3 py-2">
+              <span className="text-xs text-purple-600">System role — editable by super admin only</span>
             </div>
           )}
           {dirty && (

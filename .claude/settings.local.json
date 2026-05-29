@@ -20,7 +20,17 @@
       "Bash(Select-String -Pattern \"\\(incident|app\\)\")",
       "Bash(Select-Object -First 30)",
       "Bash(Get-ChildItem -Path \"d:\\\\offc-projects\\\\crd360\" -Directory)",
-      "Bash(Select-Object -ExpandProperty Name)"
+      "Bash(Select-Object -ExpandProperty Name)",
+      "Bash(Find \"d:\\\\offc-projects\\\\reporting\" -type f -name \"*.json\" -o -name \"*.tsx\" -o -name \"*.ts\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\offc-projects\\\\reporting\" -Recurse -Include \"*.routes.ts\")",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "PowerShell(\\(Get-Item \"d:\\\\offc-projects\\\\reporting\\\\backend\\\\node_modules\\\\@360crd\\\\logger\"\\).Attributes)",
+      "PowerShell(Get-ChildItem \"d:\\\\offc-projects\\\\reporting\\\\backend\\\\node_modules\\\\@360crd\" | ForEach-Object { \"$\\($_.Name\\): $\\(Get-ChildItem $_.FullName -Name | Select-Object -First 3\\)\" })",
+      "Bash(git remote *)",
+      "Bash(git push *)",
+      "Bash(git rm *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

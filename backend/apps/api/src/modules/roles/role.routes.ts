@@ -18,7 +18,9 @@ export default async function roleRoutes(fastify: FastifyInstance) {
   fastify.addHook("preHandler", authenticate);
 
   fastify.get("/", { preHandler: [authorize("role:read")] }, async (req, reply) => {
-    const roles = await prisma.role.findMany({
+    const tenantId = (req as any).tenantId;
+    const roles = await basePrisma.role.findMany({
+      where: { OR: [{ tenantId: null }, { tenantId }] },
       include: { permissions: { include: { permission: true } }, _count: { select: { users: true } } },
       orderBy: { level: "desc" },
     });
@@ -89,9 +91,10 @@ export default async function roleRoutes(fastify: FastifyInstance) {
     const body = z.object({ permissionIds: z.array(z.string()) }).safeParse(req.body);
     if (!body.success) throw new ValidationError("Validation failed", body.error.errors);
 
+    const isSuperAdmin = (req as any).isSuperAdmin;
     const role = await basePrisma.role.findUnique({ where: { id } });
     if (!role) throw new NotFoundError("Role", id);
-    if (role.isSystem) throw new ForbiddenError("Cannot modify system role permissions directly");
+    if (role.isSystem && !isSuperAdmin) throw new ForbiddenError("Cannot modify system role permissions directly");
 
     const perms = await basePrisma.permission.findMany({
       where: { id: { in: body.data.permissionIds } },
@@ -156,9 +159,10 @@ export default async function roleRoutes(fastify: FastifyInstance) {
   fastify.delete("/:id/permissions/:permId", { preHandler: [requireTenantAdmin()] }, async (req, reply) => {
     const { id, permId } = req.params as { id: string; permId: string };
 
+    const isSuperAdmin = (req as any).isSuperAdmin;
     const role = await basePrisma.role.findUnique({ where: { id } });
     if (!role) throw new NotFoundError("Role", id);
-    if (role.isSystem) throw new ForbiddenError("Cannot modify system role permissions directly");
+    if (role.isSystem && !isSuperAdmin) throw new ForbiddenError("Cannot modify system role permissions directly");
 
     await basePrisma.rolePermission.deleteMany({
       where: { roleId: id, permissionId: permId },
