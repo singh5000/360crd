@@ -128,7 +128,18 @@ export class AuthService {
     if (!user || user.status !== "ACTIVE") throw new UnauthorizedError();
 
     const roles = user.roles.map((ur) => ur.role.slug);
-    const newTokens = await this.generateTokens(user.id, record.tenantId, user.id, user.type, roles, undefined, (user as any).customerId);
+
+    // Create a new session in Redis so authenticate() can validate the refreshed token.
+    // Previously, user.id was incorrectly used as the session ID, causing sess:userId
+    // to not exist in Redis and every post-refresh request to fail with InvalidTokenError.
+    const newSessionId = randomUUID();
+    await sessionCache.set(
+      `sess:${newSessionId}`,
+      { userId: user.id, tenantId: record.tenantId },
+      SESSION_TTL_SECONDS
+    );
+
+    const newTokens = await this.generateTokens(user.id, record.tenantId, newSessionId, user.type, roles, undefined, (user as any).customerId);
 
     await this.repo.createRefreshToken({
       userId: user.id,

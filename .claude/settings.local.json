@@ -33,7 +33,9 @@
       "Bash(git commit -m ' *)",
       "Bash(Get-ChildItem -Path \"d:\\\\offc-projects\\\\reporting\" -Directory)",
       "Bash(grep \"^d:/offc-projects/reporting/frontend-app/src/routes/[^/]*$\")",
-      "Bash(grep \"^d:/offc-projects/reporting/frontend-portal/src/routes/[^/]*$\")"
+      "Bash(grep \"^d:/offc-projects/reporting/frontend-portal/src/routes/[^/]*$\")",
+      "Bash(grep -n \"ENDPOINTS.ppe\\\\|apiClient.delete\\\\|apiClient.patch\" \"d:\\\\offc-projects\\\\reporting\\\\frontend-admin\\\\src\\\\routes\\\\_authenticated\\\\admin\\\\ppe.\\\\$id.tsx\")",
+      "Read(//d/offc-projects/reporting/frontend-admin/src/routes/_authenticated/admin/**)"
     ]
   }
 }
