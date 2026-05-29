@@ -533,6 +533,82 @@ export default async function auditRoutes(fastify: FastifyInstance) {
     return reply.send({ success: true, data: updated });
   });
 
+  // ── Update audit ──────────────────────────────────────────────────────────
+  fastify.patch("/:id", { preHandler: [authorize("audit:update")] }, async (req, reply) => {
+    const { id } = req.params as { id: string };
+    const r = req as any;
+    const body = CreateAuditDto.partial().safeParse(req.body);
+    if (!body.success) throw new ValidationError("Validation failed", body.error.errors);
+
+    const audit = await prisma.audit.findFirst({ where: { id, deletedAt: null } });
+    if (!audit) throw new NotFoundError("Audit", id);
+
+    const { tenantId: _t, scheduledAt, dueDate, ...rest } = body.data;
+    const updated = await prisma.audit.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(scheduledAt !== undefined && { scheduledAt: new Date(scheduledAt) }),
+        ...(dueDate !== undefined && { dueDate: new Date(dueDate) }),
+      },
+    });
+
+    await auditLog.log({
+      tenantId: r.tenantId, userId: r.userId, action: "UPDATE",
+      resource: "audit", resourceId: id,
+      after: body.data, ipAddress: req.ip,
+    });
+
+    return reply.send({ success: true, data: updated });
+  });
+
+  // ── Delete audit ──────────────────────────────────────────────────────────
+  fastify.delete("/:id", { preHandler: [authorize("audit:delete")] }, async (req, reply) => {
+    const { id } = req.params as { id: string };
+    const r = req as any;
+
+    const audit = await prisma.audit.findFirst({ where: { id, deletedAt: null } });
+    if (!audit) throw new NotFoundError("Audit", id);
+
+    await prisma.audit.update({ where: { id }, data: { deletedAt: new Date() } });
+
+    await auditLog.log({
+      tenantId: r.tenantId, userId: r.userId, action: "DELETE",
+      resource: "audit", resourceId: id, ipAddress: req.ip,
+    });
+
+    return reply.status(204).send();
+  });
+
+  // ── Cancel audit ──────────────────────────────────────────────────────────
+  fastify.put("/:id/cancel", { preHandler: [authorize("audit:update")] }, async (req, reply) => {
+    const { id } = req.params as { id: string };
+    const r = req as any;
+    const { reason } = (req.body as any) ?? {};
+
+    const audit = await prisma.audit.findFirst({ where: { id, deletedAt: null } });
+    if (!audit) throw new NotFoundError("Audit", id);
+    if (!["SCHEDULED", "IN_PROGRESS", "DRAFT"].includes(audit.status)) {
+      throw new ValidationError(`Cannot cancel audit in status: ${audit.status}`, []);
+    }
+
+    const updated = await prisma.audit.update({
+      where: { id },
+      data: {
+        status: "CANCELLED",
+        ...(reason && { notes: `[CANCELLED] ${reason}\n${audit.notes || ""}`.trim() }),
+      },
+    });
+
+    await auditLog.log({
+      tenantId: r.tenantId, userId: r.userId, action: "CANCEL",
+      resource: "audit", resourceId: id,
+      after: { status: "CANCELLED", reason }, ipAddress: req.ip,
+    });
+
+    return reply.send({ success: true, data: updated });
+  });
+
   // ── Close audit ───────────────────────────────────────────────────────────
   fastify.put("/:id/close", { preHandler: [authorize("audit:approve")] }, async (req, reply) => {
     const { id } = req.params as { id: string };

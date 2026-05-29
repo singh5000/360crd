@@ -128,7 +128,7 @@ export default async function ppeRoutes(fastify: FastifyInstance) {
     const { id } = req.params as { id: string };
     const r = req as any;
     const ppe = await prisma.pPEItem.findFirst({
-      where: { id, tenantId: r.tenantId },
+      where: r.isSuperAdmin ? { id } : { id, tenantId: r.tenantId },
       include: {
         assignments: {
           include: { user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } } },
@@ -166,7 +166,9 @@ export default async function ppeRoutes(fastify: FastifyInstance) {
   fastify.delete("/:id", { preHandler: [authorize("ppe:delete")] }, async (req, reply) => {
     const { id } = req.params as { id: string };
     const r = req as any;
-    const existing = await prisma.pPEItem.findFirst({ where: { id, tenantId: r.tenantId } });
+    const existing = await prisma.pPEItem.findFirst({
+      where: r.isSuperAdmin ? { id } : { id, tenantId: r.tenantId },
+    });
     if (!existing) throw new NotFoundError("PPE Item", id);
     await prisma.pPEItem.update({ where: { id }, data: { status: "DISPOSED" as any } });
     return reply.status(204).send();
